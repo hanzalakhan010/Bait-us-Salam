@@ -1,0 +1,28 @@
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 35%;
+    gap: 10px;
+    margin: 10px auto
+}
+
+form div {
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    width: 100%;
+}
+
+
+form input,
+form label,
+form button {
+    font-size: x-large;
+}
+
+form button {
+    /* width: 65%; */
+    align-self: flex-end;
+}
