@@ -38,7 +38,7 @@ const Login: React.FC<LoginProps> = ({ setLogin }) => {
                         <input placeholder='Password' type='password' value={password} onChange={(e) => setpassword(e.target.value)} />
                     </div>
                     <p>{error}</p>
-                    <button >Login</button>
+                    <button>Login</button>
                 </form>
             )}
         </div>

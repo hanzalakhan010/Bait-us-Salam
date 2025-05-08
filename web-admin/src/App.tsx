@@ -1,12 +1,21 @@
-import { useState } from 'react'
-import './App.css'
-import Login from './components/Login'
+import { useState } from 'react';
+import './App.css';
+import Dashboard from './components/Dashboard';
+import Login from './components/Login';
+import Student from './components/Student';
 
 function App() {
   const [login, setLogin] = useState(false)
+  const [tab, setTab] = useState('dashboard')
   return (
     <>
-      {login ? <h1>Welcome</h1> : <Login setLogin={setLogin} />}
+      {login ?
+        <>
+          {tab == 'dashboard' ? <Dashboard /> : null}
+          {tab == 'students' ? <Student /> : null}
+        </>
+        :
+        <Login setLogin={setLogin} />}
     </>
   )
 }
