@@ -2,7 +2,7 @@ import { useState } from 'react';
 import './App.css';
 import Dashboard from './components/Dashboard';
 import Login from './components/Login';
-import { BookOpenText, GraduationCap, LayoutDashboard, Users } from 'lucide-react'
+import { BookOpenText, FileText, GraduationCap, LayoutDashboard, Users } from 'lucide-react'
 import Student from './components/Student';
 
 function App() {
@@ -28,6 +28,10 @@ function App() {
             <button onClick={()=>setTab('instructors')} className={`flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-colors ${tab == 'instructors' ? 'active' : null} `}>
               <GraduationCap className="w-20 h-5" />
               <span>Instructors</span>
+            </button>
+            <button onClick={()=>setTab('applications')} className={`flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-colors ${tab == 'applications' ? 'active' : null} `}>
+              <FileText className="w-20 h-5" />
+              <span>Applications</span>
             </button>
 
           </nav>
