@@ -13,26 +13,28 @@ function App() {
       {login ?
         <>
           <nav>
-            <button className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-colors">
+            <button onClick={()=>setTab('dashboard')} className={`flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-colors ${tab == 'dashboard' ? 'active' : null}`}>
               <LayoutDashboard className="w-5 h-5" />
               <span>Dashboard</span>
             </button>
-            <button className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-colors">
+            <button onClick={()=>setTab('students')} className={`flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-colors ${tab == 'students' ? 'active' : null} `}>
               <Users className="w-10 h-10" />
               <span>Students</span>
             </button>
-            <button className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-colors">
-            <BookOpenText className="w-10 h-10" />
+            <button onClick={()=>setTab('courses')} className={`flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-colors ${tab == 'courses' ? 'active' : null} `}>
+              <BookOpenText className="w-10 h-10" />
               <span>Courses</span>
             </button>
-            <button className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-colors">
-            <GraduationCap className="w-20 h-5" />
+            <button onClick={()=>setTab('instructors')} className={`flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-colors ${tab == 'instructors' ? 'active' : null} `}>
+              <GraduationCap className="w-20 h-5" />
               <span>Instructors</span>
             </button>
-            
+
           </nav>
-          {tab == 'dashboard' ? <Dashboard /> : null}
-          {tab == 'students' ? <Student /> : null}
+          <div id='tab'>
+            {tab == 'dashboard' ? <Dashboard /> : null}
+            {tab == 'students' ? <Student /> : null}
+          </div>
         </>
         :
         <Login setLogin={setLogin} />}

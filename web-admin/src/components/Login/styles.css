@@ -26,3 +26,25 @@ form button {
     /* width: 65%; */
     align-self: flex-end;
 }
+@media screen and (max-width: 900px) {
+    form {
+        width: 90%;
+    }
+
+    form input,
+    form label,
+    form button {
+        font-size: x-large;
+    }
+}
+/* @media screen and (max-width: 600px) {
+    form {
+        width: 90%;
+    }
+
+    form input,
+    form label,
+    form button {
+        font-size: large;
+    }
+} */
