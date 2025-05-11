@@ -34,6 +34,7 @@ class Students(db.Model):
             "last_name": self.last_name,
             "docs_folder": self.docs_folder,
             "age": self.age,
+            "cnic":self.cnic,
             "address": self.address,
             "phone": self.phone,
             "email": self.email,
