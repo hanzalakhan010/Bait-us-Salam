@@ -38,6 +38,14 @@ class Students(db.Model):
             "password": self.password,
         }
 
+    def to_dict_short(self):
+        return {
+            "id": self.id,
+            "last_name": self.last_name,
+            "docs_folder": self.docs_folder,
+            "email": self.email,
+        }
+
 
 class Courses(db.Model):
     __tablename__ = "courses"
@@ -84,8 +92,15 @@ with app.app_context():
     db.session.commit()
 
 
-@app.route("/api/v1/students")
-def Students(): ...
+@app.route("/api/v1/students", methods=["GET", "POST", "PATCH"])
+def StudentsManagment():
+    if request.method == "GET":
+        students = Students.query.all()
+        return jsonify({"students": [student.to_dict_short() for student in students]}),200
+    elif request.method == "POST":
+        ...
+    elif request.method == "PATCH":
+        ...
 
 
 @app.route("/api/v1/admin/login", methods=["POST"])
