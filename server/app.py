@@ -17,6 +17,8 @@ class Students(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(20))
     last_name = db.Column(db.String(20))
+    cnic = db.Column(db.String(20))
+    father_cnic = db.Column(db.String(20))
     docs_folder = db.Column(db.String(20))
     age = db.Column(db.Integer)
     address = db.Column(db.String(100))
@@ -96,7 +98,10 @@ with app.app_context():
 def StudentsManagment():
     if request.method == "GET":
         students = Students.query.all()
-        return jsonify({"students": [student.to_dict_short() for student in students]}),200
+        return (
+            jsonify({"students": [student.to_dict_short() for student in students]}),
+            200,
+        )
     elif request.method == "POST":
         ...
     elif request.method == "PATCH":
