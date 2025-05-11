@@ -1,27 +1,39 @@
+*{
+    font-family: 'Courier New', Courier, monospace;
+}
+
 nav {
     display: flex;
     flex-direction: row;
-    width: 100dvw;
+    /* width: 100dvw; */
     background-color: aquamarine;
     padding: 10px;
     margin: 0px;
     gap: 10px;
-    box-sizing: border-box;
+    /* box-sizing: border-box; */
     position: sticky;
     top: 0px;
 
 }
 
-nav button {
-    border: 0.2px soild black;
+nav a {
+    /* border: 0.2px soild black; */
     border-radius: 10px;
     &:hover{
         cursor: pointer;
     }
+    &:visited{
+        text-decoration: none;
+    }
+}
+nav a{
+    text-decoration: none;
 }
 
-nav button.active {
+nav a.active {
     background-color: aquamarine;
 }
 
-#tab {}
+a{
+    text-decoration: none;
+}
