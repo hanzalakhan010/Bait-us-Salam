@@ -22,7 +22,7 @@ class Students(db.Model):
     docs_folder = db.Column(db.String(20))
     age = db.Column(db.Integer)
     address = db.Column(db.String(100))
-    phone = db.Column(db.String(10))
+    phone = db.Column(db.String(15))
     email = db.Column(db.String(50))
     password = db.Column(db.String(20))
     __table_args__ = (UniqueConstraint("email"),)
@@ -34,7 +34,8 @@ class Students(db.Model):
             "last_name": self.last_name,
             "docs_folder": self.docs_folder,
             "age": self.age,
-            "cnic":self.cnic,
+            "cnic": self.cnic,
+            "father_cnic":self.father_cnic,
             "address": self.address,
             "phone": self.phone,
             "email": self.email,
@@ -45,6 +46,7 @@ class Students(db.Model):
         return {
             "id": self.id,
             "last_name": self.last_name,
+            "first_name": self.first_name,
             "docs_folder": self.docs_folder,
             "email": self.email,
         }
@@ -104,9 +106,60 @@ def StudentsManagment():
             200,
         )
     elif request.method == "POST":
-        ...
+        first_name = request.json.get("first_name")
+        last_name = request.json.get("last_name")
+        cnic = request.json.get("cnic")
+        father_cnic = request.json.get("father_cnic")
+        age = request.json.get("age")
+        address = request.json.get("address")
+        phone = request.json.get("phone")
+        email = request.json.get("email")
+        password = request.json.get("password")
+        if Students.query.filter_by(email=email).first():
+            return jsonify({"error": "Email already registered"}), 400
+        # try:
+        newStudent = Students(
+            first_name=first_name,
+            last_name=last_name,
+            cnic=cnic,
+            father_cnic=father_cnic,
+            age=age,
+            address=address,
+            phone=phone,
+            email=email,
+            password=password,
+        )
+        db.session.add(newStudent)
+        db.session.commit()
+        return jsonify({"message": "Student added successfully"}), 201
+        # except:
+        #     db.session.rollback()
+        #     return jsonify({"error": "Can not add student at the moment"}),400
+
     elif request.method == "PATCH":
         ...
+
+
+@app.route("/api/v1/student/<int:student_id>", methods=["GET", "PATCH", "DELETE"])
+def StudentManagmentById(student_id):
+    student = Students.query.get_or_404(student_id)
+
+    if request.method == "GET":
+        return jsonify(student.to_dict()), 200
+
+    elif request.method == "PATCH":
+        data = request.json
+        print(data)
+        for key, value in data.items():
+            if hasattr(student, key):
+                setattr(student, key, value)
+        db.session.commit()
+        return jsonify({"message": "Student updated successfully"}), 200
+
+    elif request.method == "DELETE":
+        db.session.delete(student)
+        db.session.commit()
+        return jsonify({"message": "Student deleted successfully"}), 200
 
 
 @app.route("/api/v1/admin/login", methods=["POST"])
