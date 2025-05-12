@@ -35,6 +35,9 @@ const NewStudent: React.FC = () => {
         if (newStudent.password != newStudent.r_password) {
             setError('Passwords dont match')
         }
+        else{
+            let response = await fetch('')
+        }
 
 
 
