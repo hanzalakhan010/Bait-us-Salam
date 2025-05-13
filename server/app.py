@@ -35,7 +35,7 @@ class Students(db.Model):
             "docs_folder": self.docs_folder,
             "age": self.age,
             "cnic": self.cnic,
-            "father_cnic":self.father_cnic,
+            "father_cnic": self.father_cnic,
             "address": self.address,
             "phone": self.phone,
             "email": self.email,
@@ -50,8 +50,10 @@ class Students(db.Model):
             "docs_folder": self.docs_folder,
             "email": self.email,
         }
+
     def __repr__(self):
-        return f'<Student> {self.id}'
+        return f"<Student> {self.id}"
+
 
 class Courses(db.Model):
     __tablename__ = "courses"
@@ -62,6 +64,22 @@ class Courses(db.Model):
     instructor = db.relationship("Instructors", backref="courses")
     status = db.Column(db.String(20))
     timings = db.Column(db.JSON)
+    def to_dict_short(self):
+        return {
+            "id": self.id,
+            "course_name": self.course_name,
+            "status": self.status,
+            "timings": self.timings,
+        }
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "course_name": self.course_name,
+            "course_description": self.course_description,
+            "instructor_id": self.instructor_id,
+            "status": self.status,
+            "timings": self.timings,
+        }
 
 
 class Instructors(db.Model):
@@ -98,7 +116,7 @@ with app.app_context():
     db.session.commit()
 
 
-@app.route("/api/v1/students", methods=["GET", "POST", "PATCH"])
+@app.route("/api/v1/students", methods=["GET", "POST"])
 def StudentsManagment():
     if request.method == "GET":
         students = Students.query.all()
@@ -160,6 +178,15 @@ def StudentManagmentById(student_id):
         db.session.delete(student)
         db.session.commit()
         return jsonify({"message": "Student deleted successfully"}), 200
+
+
+@app.route("/api/v1/courses", methods=["GET", "POST"])
+def CourseManagment():
+    if request.method == "GET":
+        courses = Courses.query.all()
+        return ...
+    elif request.method == "POST":
+        ...
 
 
 @app.route("/api/v1/admin/login", methods=["POST"])
