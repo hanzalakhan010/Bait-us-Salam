@@ -144,7 +144,6 @@ def StudentsManagment():
 @app.route("/api/v1/student/<int:student_id>", methods=["GET", "PATCH", "DELETE"])
 def StudentManagmentById(student_id):
     student = Students.query.get_or_404(student_id)
-    print(student)
     if request.method == "GET":
         return jsonify(student.to_dict()), 200
 
