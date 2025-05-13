@@ -6,7 +6,7 @@ table{
     width: 80%;
     margin:10px auto;
 }
-#actions{
+.actions{
     width: 80%;
     margin:10px auto;
     display: flex;
@@ -15,12 +15,17 @@ table{
     align-items: center;
     column-gap: 10px;
 }
-#actions a{
+.actions a{
     border: none;
     background: gray;
     font-size: medium;
     padding: 10px;
     color: white;
+}
+.actions button{
+    /* border: none; */
+    
+
 }
 #tableDiv{
     width: 90%;
