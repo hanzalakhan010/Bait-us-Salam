@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './newStudent.css';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface Student {
     first_name: string,
@@ -33,6 +33,7 @@ const SingleStudent: React.FC = () => {
 
     const [error, setError] = useState('')
     const [message, setMessage] = useState('')
+    const navigate = useNavigate(); // Initialize useNavigate
 
     const editStudent = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -66,10 +67,22 @@ const SingleStudent: React.FC = () => {
 
     }
     const loadStudent = async () => {
-        let response = await fetch(`http://localhost:5000/api/v1/student/${id}`)
-        let data = await response.json()
-        setStudent(data)
-    }
+        try {
+            let response = await fetch(`http://localhost:5000/api/v1/student/${id}`);
+            if (response.status === 200) {
+                let data = await response.json();
+                setStudent(data);
+            } else if (response.status === 404) {
+                // alert("Student not found");
+                navigate('/students')
+            } else {
+                alert("An error occurred while fetching the student data");
+            }
+        } catch (error) {
+            console.error("Error fetching student:", error);
+            alert("Failed to fetch student data. Please try again later.");
+        }
+    };
     useEffect(() => {
         loadStudent()
 
@@ -77,7 +90,7 @@ const SingleStudent: React.FC = () => {
     return (
         <div className="form-container">
             <form className="form" onSubmit={editStudent}>
-                <h1 className="form-title">New Student</h1>
+                <h1 className="form-title">Edit Student</h1>
                 <div className="form-grid">
                     <div className="form-group">
                         <label htmlFor="first_name" className="form-label">First Name:</label>
