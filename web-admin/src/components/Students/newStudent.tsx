@@ -29,14 +29,32 @@ const NewStudent: React.FC = () => {
 
     })
     const [error, setError] = useState('')
+    const [message, setMessage] = useState('')
+
     const createStudent = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
         if (newStudent.password != newStudent.r_password) {
             setError('Passwords dont match')
         }
-        else{
-            let response = await fetch('')
+        else {
+            let response = await fetch('http://localhost:5000/api/v1/students',
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': "Application/json"
+                    },
+                    body: JSON.stringify(newStudent)
+
+                }
+            )
+            let data = await response.json()
+            if (response.status == 200) {
+                setMessage(data.message)
+            }
+            else {
+                setError(data.error)
+            }
         }
 
 
@@ -116,6 +134,7 @@ const NewStudent: React.FC = () => {
                     </div>
                 </div>
                 <p className='error'>{error}</p>
+                <p className='success'>{message}</p>
                 <button className="form-button">Submit</button>
             </form>
         </div>

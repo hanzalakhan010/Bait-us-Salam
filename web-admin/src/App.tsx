@@ -6,6 +6,7 @@ import { BookOpenText, FileText, GraduationCap, LayoutDashboard, Users } from 'l
 import Students from './components/Students';
 import { Link } from 'react-router-dom';
 import NewStudent from './components/Students/newStudent';
+import SingleStudent from './components/Students/singleStudent';
 
 function App() {
   const [tab, setTab] = useState('dashboard')
@@ -49,8 +50,9 @@ function App() {
         <Routes>
           <Route path="/dasboard" element={<Dashboard />} />
           <Route path="/students" element={<Students />} />
-          <Route path="/studentActions/new" element={<NewStudent/>} />
-          
+          <Route path="/studentActions/new" element={<NewStudent />} />
+          <Route path='/students/:id' element={<SingleStudent />} />
+
         </Routes>
         {/* <div id='tab'>
           {tab == 'dashboard' ? <Dashboard /> : null}
