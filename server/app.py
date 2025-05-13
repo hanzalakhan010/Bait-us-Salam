@@ -50,7 +50,8 @@ class Students(db.Model):
             "docs_folder": self.docs_folder,
             "email": self.email,
         }
-
+    def __repr__(self):
+        return f'<Student> {self.id}'
 
 class Courses(db.Model):
     __tablename__ = "courses"
@@ -143,7 +144,7 @@ def StudentsManagment():
 @app.route("/api/v1/student/<int:student_id>", methods=["GET", "PATCH", "DELETE"])
 def StudentManagmentById(student_id):
     student = Students.query.get_or_404(student_id)
-
+    print(student)
     if request.method == "GET":
         return jsonify(student.to_dict()), 200
 
