@@ -1,0 +1,124 @@
+```mermaid
+erDiagram
+STUDENTS {
+    integer student_id PK
+    varchar first_name
+    varchar last_name
+    varchar email
+    integer roll_no
+    varchar cnic
+    varchar father_cnic
+    date dob
+    varchar address 
+    varchar docs_folder
+    varchar phone
+    varchar status
+    timestamp created_at
+}
+
+COURSES {
+    integer course_id PK
+    varchar course_name
+    text description
+    varchar status
+    timestamp created_at
+    timestamp updated_at
+    blob timings
+}
+APPLICANTS{
+    integer applicant_id PK
+    varchar first_name
+    varchar last_name
+    varchar email
+    varchar cnic
+    varchar father_cnic
+    date dob
+    varchar address 
+    varchar docs_folder
+    varchar phone
+    varchar status
+    timestamp created_at
+}
+APPLICATIONS {
+    integer application_id PK
+    integer student_id FK
+    integer applicant_id FK
+    integer course_id FK
+    date application_date
+    varchar status
+    text comments
+    timestamp created_at
+    timestamp updated_at
+    integer reviewed_by
+    date review_date
+}
+
+COURSE_ENROLLMENT {
+    integer id PK
+    integer course_id FK
+    integer student_id FK
+    date date
+    integer course_section FK
+}
+
+ATTENDANCES {
+    integer id PK
+    integer student_id FK
+    integer course_enrollment_id FK
+    date date
+    time timestamp
+    text status
+}
+
+COURSE_SECTION {
+    integer id PK
+    varchar name
+    integer course_id FK
+    integer instructor_id FK
+}
+
+COURSE_SESSION {
+    integer id PK
+    integer course_section_id FK
+    date date
+    text topic
+    text instructor_notes
+    boolean is_cancelled
+}
+
+ANNOUNCEMENTS {
+    integer id PK
+    text announcement
+    date date
+    integer course_section_id FK
+}
+
+GRADEBOOK {
+    integer id PK
+    integer student_id FK
+    integer exam_id FK
+    integer grade
+    integer notes
+}
+
+EXAMS {
+    integer id PK
+    integer course_section FK
+    title text
+    date date
+    link text
+}
+
+STUDENTS ||--o| APPLICATIONS : applies_to
+APPLICANTS ||--o| APPLICATIONS : applies_to
+COURSES ||--o| APPLICATIONS : has
+STUDENTS ||--o| COURSE_ENROLLMENT : enrolls_in
+COURSES ||--o| COURSE_ENROLLMENT : includes
+COURSE_ENROLLMENT ||--o| ATTENDANCES : attends
+COURSE_SECTION ||--o| COURSE_SESSION : contains
+COURSE_SECTION ||--o| ANNOUNCEMENTS : publishes
+COURSE_SECTION ||--o| EXAMS : publishes
+EXAMS ||--o| GRADEBOOK : has_grades
+COURSE_SECTION ||--o| ATTENDANCES : tracks
+INSTRUCTORS ||--o| COURSE_SECTION : teaches
+```
