@@ -20,7 +20,7 @@ class Students(db.Model):
     cnic = db.Column(db.String(20))
     father_cnic = db.Column(db.String(20))
     docs_folder = db.Column(db.String(20))
-    age = db.Column(db.Integer)
+    dob = db.Column(db.DateTime)
     address = db.Column(db.String(100))
     phone = db.Column(db.String(15))
     email = db.Column(db.String(50))
