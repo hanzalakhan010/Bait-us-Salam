@@ -23,7 +23,7 @@ class Students(db.Model):
     dob = db.Column(db.DateTime)
     address = db.Column(db.String(100))
     phone = db.Column(db.String(15))
-    email = db.Column(db.String(50))
+    email = db.Column(db.String(50), unique=True, index=True)
     password = db.Column(db.String(20))
     __table_args__ = (UniqueConstraint("email"),)
 
@@ -66,7 +66,7 @@ class Applicants(db.Model):
     dob = db.Column(db.DateTime)
     address = db.Column(db.String(100))
     phone = db.Column(db.String(15))
-    email = db.Column(db.String(50))
+    email = db.Column(db.String(50), unique=True, index=True)
     password = db.Column(db.String(20))
     __table_args__ = (UniqueConstraint("email"),)
 
@@ -103,17 +103,14 @@ class Courses(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     course_name = db.Column(db.String(20))
     course_description = db.Column(db.String(100))
-    instructor_id = db.Column(db.Integer, db.ForeignKey("instructors.id"))
-    instructor = db.relationship("Instructors", backref="courses")
+
     status = db.Column(db.String(20))
-    timings = db.Column(db.JSON)
 
     def to_dict_short(self):
         return {
             "id": self.id,
             "course_name": self.course_name,
             "status": self.status,
-            "timings": self.timings,
         }
 
     def to_dict(self):
@@ -121,9 +118,7 @@ class Courses(db.Model):
             "id": self.id,
             "course_name": self.course_name,
             "course_description": self.course_description,
-            "instructor_id": self.instructor_id,
             "status": self.status,
-            "timings": self.timings,
         }
 
 
@@ -135,10 +130,73 @@ class Instructors(db.Model):
     last_name = db.Column(db.String(20))
     email = db.Column(db.String(50))
     password = db.Column(db.String(20))
-    phone = db.Column(db.String(10))
+    phone = db.Column(db.String(15))
     bio = db.Column(db.String(100))
     status = db.Column(db.String(20))
     __table_args__ = (UniqueConstraint("email"),)
+
+
+class CourseSection(db.Model):
+    __tablename__ = "course_sections"
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(20))
+    instructor_id = db.Column(db.Integer, db.ForeignKey("instructors.id"))
+    course_id = db.Column(db.Integer, db.ForeignKey("courses.id"))
+    timings = db.Column(db.JSON)
+    course = db.relationship(Courses, backref="course_sections")
+    instructor = db.relationship(Instructors, backref="course_sections")
+
+
+class Announcements(db.Model):
+    __tablename__ = "announcements"
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.String(200))
+    date = db.Column(db.Date)
+    course_section_id = db.Column(db.Integer, db.ForeignKey("course_sections.id"))
+    course_section = db.relationship(CourseSection, backref="announcements")
+
+
+"""
+
+EXAMS {
+    integer id PK
+    integer course_section FK
+    title text
+    date date
+    link text
+}
+"""
+
+
+class Exams(db.Model):
+    __tablename__ = "exams"
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(50))
+    link = db.Column(db.String(200))
+    course_section_id = db.Column(db.Integer, db.ForeignKey("course_sections.id"))
+    course_section = db.relationship(CourseSection, backref="exams")
+
+
+class CourseSession(db.Model):
+    __tablename__ = "course_session"
+    id = db.Column(db.Integer, primary_key=True)
+    course_section_id = db.Column(db.Integer, db.ForeignKey("course_sections.id"))
+    date = db.Column(db.Date)
+    topic = db.Column(db.String(100))
+    instructor_notes = db.Column(db.String(100))
+    is_cancelled = db.Column(db.Boolean, default=False)
+    course_section = db.relationship(CourseSection, backref="course_session")
+
+
+class CourseEnrollment(db.Model):
+    __tablename__ = "course_enrollments"
+    id = db.Column(db.Integer, primary_key=True)
+    course_id = db.Column(db.Integer, db.ForeignKey("courses.id"))
+    student_id = db.Column(db.Integer, db.ForeignKey("students.id"))
+    course_section_id = db.Column(db.Integer, db.ForeignKey("course_sections.id"))
+    date = db.Column(db.Date)
+    student = db.relationship(Students, backref="course_enrollments")
+    course = db.relationship(Courses, backref="course_enrollments")
 
 
 class Applications(db.Model):
@@ -148,14 +206,14 @@ class Applications(db.Model):
     applicant_id = db.Column(db.Integer, db.ForeignKey("applicants.id"), nullable=True)
     course_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False)
     application_date = db.Column(db.Date, nullable=True)
-    status = db.Column(db.String(20), nullable=True)
+    status = db.Column(db.String(20), nullable=True, default="pending")
     comments = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, nullable=True)
     updated_at = db.Column(db.DateTime, nullable=True)
     additional_info = db.Column(db.JSON)
-    student = db.relationship("Students", backref="applications")
-    applicant = db.relationship("Applicants", backref="application")
-    course = db.relationship("Courses", backref="applications")
+    student = db.relationship(Students, backref="applications")
+    applicant = db.relationship(Applicants, backref="application")
+    course = db.relationship(Courses, backref="applications")
 
 
 with app.app_context():
@@ -176,31 +234,31 @@ def StudentsManagment():
         last_name = request.json.get("last_name")
         cnic = request.json.get("cnic")
         father_cnic = request.json.get("father_cnic")
-        age = request.json.get("age")
+        dob = request.json.get("dob")
         address = request.json.get("address")
         phone = request.json.get("phone")
         email = request.json.get("email")
         password = request.json.get("password")
         if Students.query.filter_by(email=email).first():
             return jsonify({"error": "Email already registered"}), 400
-        # try:
-        newStudent = Students(
-            first_name=first_name,
-            last_name=last_name,
-            cnic=cnic,
-            father_cnic=father_cnic,
-            age=age,
-            address=address,
-            phone=phone,
-            email=email,
-            password=password,
-        )
-        db.session.add(newStudent)
-        db.session.commit()
-        return jsonify({"message": "Student added successfully"}), 201
-        # except:
-        #     db.session.rollback()
-        #     return jsonify({"error": "Can not add student at the moment"}),400
+        try:
+            newStudent = Students(
+                first_name=first_name,
+                last_name=last_name,
+                cnic=cnic,
+                father_cnic=father_cnic,
+                dob=dob,
+                address=address,
+                phone=phone,
+                email=email,
+                password=password,
+            )
+            db.session.add(newStudent)
+            db.session.commit()
+            return jsonify({"message": "Student added successfully"}), 201
+        except:
+            db.session.rollback()
+            return jsonify({"error": "Can not add student at the moment"}), 400
 
     elif request.method == "PATCH":
         ...
