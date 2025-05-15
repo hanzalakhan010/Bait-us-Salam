@@ -23,7 +23,6 @@ COURSES {
     varchar status
     timestamp created_at
     timestamp updated_at
-    blob timings
 }
 APPLICANTS{
     integer applicant_id PK
@@ -75,6 +74,8 @@ COURSE_SECTION {
     varchar name
     integer course_id FK
     integer instructor_id FK
+    blob timings
+
 }
 
 COURSE_SESSION {
@@ -114,7 +115,7 @@ APPLICANTS ||--o| APPLICATIONS : applies_to
 COURSES ||--o| APPLICATIONS : has
 STUDENTS ||--o| COURSE_ENROLLMENT : enrolls_in
 COURSES ||--o| COURSE_ENROLLMENT : includes
-COURSE_ENROLLMENT ||--o| ATTENDANCES : attends
+COURSE_ENROLLMENT ||--o| COURSE_SECTION : 
 COURSE_SECTION ||--o| COURSE_SESSION : contains
 COURSE_SECTION ||--o| ANNOUNCEMENTS : publishes
 COURSE_SECTION ||--o| EXAMS : publishes
