@@ -256,7 +256,8 @@ def StudentsManagment():
             db.session.add(newStudent)
             db.session.commit()
             return jsonify({"message": "Student added successfully"}), 201
-        except:
+        except Exception as error:
+            print(error)
             db.session.rollback()
             return jsonify({"error": "Can not add student at the moment"}), 400
 
@@ -289,7 +290,7 @@ def StudentManagmentById(student_id):
 def CourseManagment():
     if request.method == "GET":
         courses = Courses.query.all()
-        return ...
+        return jsonify({"courses": [course.to_dict() for course in courses]}), 200
     elif request.method == "POST":
         ...
 
