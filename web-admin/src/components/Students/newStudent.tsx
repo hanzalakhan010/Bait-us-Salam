@@ -37,6 +37,9 @@ const NewStudent: React.FC = () => {
         if (newStudent.password != newStudent.r_password) {
             setError('Passwords dont match')
         }
+        if (isNaN(new Date(newStudent.dob).getTime())) {
+            setError('Date of birth must be in correct format')
+        }
         else {
             let response = await fetch('http://localhost:5000/api/v1/students',
                 {
@@ -94,7 +97,7 @@ const NewStudent: React.FC = () => {
                         <input type="text" id="dob" name="dob" className="form-input"
                             required
                             value={newStudent.dob}
-                            onChange={(e) => setNewStudent({ ...newStudent, dob:e.target.value })} />
+                            onChange={(e) => setNewStudent({ ...newStudent, dob: e.target.value })} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="address" className="form-label">Address:</label>
