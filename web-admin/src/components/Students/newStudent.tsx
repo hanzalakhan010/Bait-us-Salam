@@ -6,7 +6,7 @@ interface Student {
     last_name: string,
     cnic: string,
     father_cnic: string,
-    age: number,
+    dob: string,
     address: string,
     phone: string,
     email: string,
@@ -20,7 +20,7 @@ const NewStudent: React.FC = () => {
         last_name: '',
         cnic: '',
         father_cnic: '',
-        age: 0,
+        dob: "",
         address: '',
         phone: '',
         email: '',
@@ -90,11 +90,11 @@ const NewStudent: React.FC = () => {
                             onChange={(e) => setNewStudent({ ...newStudent, father_cnic: e.target.value })} />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="age" className="form-label">Age:</label>
-                        <input type="number" id="age" name="age" className="form-input"
+                        <label htmlFor="dob" className="form-label">Date of Birth(DD/MM/YYYY):</label>
+                        <input type="text" id="dob" name="dob" className="form-input"
                             required
-                            value={newStudent.age}
-                            onChange={(e) => setNewStudent({ ...newStudent, age: parseInt(e.target.value) })} />
+                            value={newStudent.dob}
+                            onChange={(e) => setNewStudent({ ...newStudent, dob:e.target.value })} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="address" className="form-label">Address:</label>
