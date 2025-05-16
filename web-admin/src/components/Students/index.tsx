@@ -15,7 +15,7 @@ const Students: React.FC = () => {
   const [selected, setSelected] = useState<Set<number>>(new Set());
 
   const loadStudents = async () => {
-    let response = await fetch('http://localhost:5000/api/v1/students')
+    let response = await fetch('http://localhost:5000/api/v1/students/')
     let data = await response.json()
     setStudents(data.students)
   }

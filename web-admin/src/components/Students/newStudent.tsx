@@ -41,7 +41,7 @@ const NewStudent: React.FC = () => {
             setError('Date of birth must be in correct format')
         }
         else {
-            let response = await fetch('http://localhost:5000/api/v1/students',
+            let response = await fetch('http://localhost:5000/api/v1/students/',
                 {
                     method: "POST",
                     headers: {
@@ -52,10 +52,12 @@ const NewStudent: React.FC = () => {
                 }
             )
             let data = await response.json()
-            if (response.status == 200) {
+            if (response.status == 201) {
+                setError('')
                 setMessage(data.message)
             }
             else {
+                setMessage('')
                 setError(data.error)
             }
         }
