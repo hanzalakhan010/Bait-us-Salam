@@ -2,36 +2,37 @@ from flask import Blueprint, request, jsonify
 from app.models.students import Students
 from flask_cors import cross_origin
 from app.models import db
+from app.services.students import (
+    editStudentById,
+    getStudentById,
+    removeStudentById,
+    getAllStudents,
+)
 
 student_blueprint = Blueprint("students", __name__)
 
+
 @student_blueprint.route("/<int:student_id>", methods=["GET", "PATCH", "DELETE"])
 def StudentManagmentById(student_id):
-    student = Students.query.get_or_404(student_id)
+    # student = Students.query.get_or_404(student_id)
     if request.method == "GET":
-        return jsonify(student.to_dict()), 200
+        return jsonify(getStudentById(student_id=student_id)), 200
 
     elif request.method == "PATCH":
         data = request.json
-        print(data)
-        for key, value in data.items():
-            if hasattr(student, key):
-                setattr(student, key, value)
-        db.session.commit()
+        editStudentById(student_id=student_id, data=data)
         return jsonify({"message": "Student updated successfully"}), 200
 
     elif request.method == "DELETE":
-        db.session.delete(student)
-        db.session.commit()
+        removeStudentById(student_id=student_id)
         return jsonify({"message": "Student deleted successfully"}), 200
 
 
 @student_blueprint.route("/", methods=["GET", "POST"])
 def StudentsManagment():
     if request.method == "GET":
-        students = Students.query.all()
         return (
-            jsonify({"students": [student.to_dict_short() for student in students]}),
+            jsonify({"students": getAllStudents()}),
             200,
         )
     elif request.method == "POST":
