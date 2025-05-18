@@ -1,4 +1,5 @@
 from app.models import db
+from sqlalchemy import func
 
 
 class Courses(db.Model):
@@ -13,16 +14,18 @@ class Courses(db.Model):
             "id": self.id,
             "course_name": self.course_name,
             "status": self.status,
+            "enrollments":self.total_enrollments()
         }
 
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "course_name": self.course_name,
-            "course_description": self.course_description,
-            "status": self.status,
-        }
+    def total_enrollments(self):
+        total = (
+            db.session.query(func.count(CourseEnrollment.id))
+            .filter(CourseEnrollment.course_id == self.id)
+            .scalar()
+        )
+        return total
 
+  
 
 class CourseSection(db.Model):
     __tablename__ = "course_sections"

@@ -7,6 +7,9 @@ import Students from './components/Students';
 import { Link } from 'react-router-dom';
 import NewStudent from './components/Students/newStudent';
 import SingleStudent from './components/Students/singleStudent';
+import Courses from './components/Courses';
+import NewCourse from './components/Courses/newCourse';
+import CourseView from './components/Courses/courseView';
 
 function App() {
   const [tab, setTab] = useState('dashboard')
@@ -28,7 +31,7 @@ function App() {
             </Link>
           </div>
           <div>
-            <Link to='/courses' onClick={() => setTab('courses')} className={`flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-colors ${tab == 'courses' ? 'active' : null} `}>
+            <Link to='/courses' className={`flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-colors ${tab == 'courses' ? 'active' : null} `}>
               <BookOpenText className="w-10 h-10" />
               <span>Courses</span>
             </Link>
@@ -49,9 +52,14 @@ function App() {
         </nav>
         <Routes>
           <Route path="/dasboard" element={<Dashboard />} />
+          {/* For Student  */}
           <Route path="/students" element={<Students />} />
           <Route path="/studentActions/new" element={<NewStudent />} />
           <Route path='/students/:id' element={<SingleStudent />} />
+          {/* For Courses  */}
+          <Route path="/courses" element={<Courses />} />
+          <Route path="/courseActions/new" element={<NewCourse />} />
+          <Route path='/courses/:id' element={<CourseView />} />
 
         </Routes>
         {/* <div id='tab'>

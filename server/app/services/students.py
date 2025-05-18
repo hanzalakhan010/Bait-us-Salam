@@ -55,6 +55,6 @@ def registerStudent(studentDetails: dict):
         db.session.commit()
         return jsonify({"message": "Student added successfully"}), 201
     except Exception as error:
-        print(error)
+        # print(error)
         db.session.rollback()
         return jsonify({"error": "Can not add student at the moment"}), 400
