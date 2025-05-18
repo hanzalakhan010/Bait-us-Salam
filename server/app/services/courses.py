@@ -8,6 +8,11 @@ def getAllCourses():
     return jsonify({"courses": [course.to_dict_short() for course in courses]}), 200
 
 
+def getCourseById(course_id):
+    course = Courses.query.get_or_404(course_id)
+    return jsonify({"course": course.to_dict()})
+
+
 def addCourse(courseDetails: dict):
     course_name = courseDetails.get("course_name", "")
     course_description = courseDetails.get("course_description", "")
