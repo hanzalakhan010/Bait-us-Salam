@@ -14,7 +14,7 @@ class Courses(db.Model):
             "id": self.id,
             "course_name": self.course_name,
             "status": self.status,
-            "enrollments":self.total_enrollments()
+            "enrollments": self.total_enrollments(),
         }
 
     def total_enrollments(self):
@@ -25,7 +25,6 @@ class Courses(db.Model):
         )
         return total
 
-  
 
 class CourseSection(db.Model):
     __tablename__ = "course_sections"
@@ -33,6 +32,7 @@ class CourseSection(db.Model):
     title = db.Column(db.String(20))
     instructor_id = db.Column(db.Integer, db.ForeignKey("instructors.id"))
     course_id = db.Column(db.Integer, db.ForeignKey("courses.id"))
+    room = db.Column(db.String(20))
     timings = db.Column(db.JSON)
     course = db.relationship(Courses, backref="course_sections")
     instructor = db.relationship("Instructors", backref="course_sections")
