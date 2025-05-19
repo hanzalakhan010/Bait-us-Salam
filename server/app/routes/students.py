@@ -12,7 +12,7 @@ from app.services.students import (
 student_blueprint = Blueprint("students", __name__)
 
 
-@student_blueprint.route("/<int:student_id>/attendances", methods=["GET", "POST"])
+@student_blueprint.route("/<int:student_id>/courses", methods=["GET", "POST"])
 def StudentByManagementById(student_id):
     if request.method == "GET":
         ...

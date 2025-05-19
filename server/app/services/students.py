@@ -61,6 +61,7 @@ def registerStudent(studentDetails: dict):
         return jsonify({"error": "Can not add student at the moment"}), 400
 
 
-def getStudentById(student_id):
-    student = Students.query.get_or_404(student_id)
-
+def getStudentCoursesById(student_id):
+    from app.models.courses import CourseEnrollment, Courses
+    course_enrollmnents = CourseEnrollment.query.filter_by(student_id=student_id)
+    
