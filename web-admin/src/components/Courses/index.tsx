@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import './styles.css'
 import { Link } from 'react-router-dom';
+import './styles.css';
 
 interface Course {
     id: number,
@@ -13,9 +13,14 @@ const Courses: React.FC = () => {
     const [selected, setSelected] = useState<Set<number>>(new Set());
 
     const loadCourses = async () => {
-        let response = await fetch('http://localhost:5000/api/v1/courses/')
-        let data = await response.json()
-        setCourses(data.courses)
+        try {
+            let response = await fetch('http://localhost:5000/api/v1/courses/')
+            let data = await response.json()
+            setCourses(data.courses)
+        }
+        catch {
+            alert('Error connecting to server')
+        }
     }
     const toggleOne = (id: number) => {
         const newSet: Set<number> = new Set(selected);

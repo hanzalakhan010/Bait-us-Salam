@@ -15,9 +15,14 @@ const Students: React.FC = () => {
   const [selected, setSelected] = useState<Set<number>>(new Set());
 
   const loadStudents = async () => {
-    let response = await fetch('http://localhost:5000/api/v1/students/')
-    let data = await response.json()
-    setStudents(data.students)
+    try{
+      let response = await fetch('http://localhost:5000/api/v1/students/')
+      let data = await response.json()
+      setStudents(data.students)
+    }
+    catch{
+      alert('Error connecting to server')
+    }
   }
   const toggleOne = (id: number) => {
     const newSet: Set<number> = new Set(selected);

@@ -1,0 +1,56 @@
+#course {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    margin: 10px auto;
+    justify-content: center;
+    align-items: center;
+}
+
+#course #sections {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    border: .2px solid gray;
+}
+
+#course #sections button {
+    align-self: flex-end;
+    margin: 10px;
+    border: none;
+    padding: 10px;
+    color: white;
+    background-color: #007bff;
+}
+
+#course h2 {
+    text-align: center;
+}
+
+#addSection {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    margin: 2px auto;
+    border: .2px solid gray;
+    padding: 5px;
+}
+
+#addSection input,
+#addSection select {
+    font-size: medium;
+}
+
+#addSection #days {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#days p {
+    padding: 5px;
+    border: .1px solid black;
+    border-radius: 5px;
+}
