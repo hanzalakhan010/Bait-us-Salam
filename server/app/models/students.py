@@ -1,11 +1,12 @@
 from app.models import db
+from sqlalchemy.orm import joinedload
 
 
 class Students(db.Model):
     __tablename__ = "students"
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(20))
-    last_name = db.Column(db.String(20))
+    name = db.Column(db.String(20))
+    father_name = db.Column(db.String(20))
     cnic = db.Column(db.String(20))
     father_cnic = db.Column(db.String(20))
     docs_folder = db.Column(db.String(20))
@@ -16,11 +17,26 @@ class Students(db.Model):
     password = db.Column(db.String(20))
     __table_args__ = (db.UniqueConstraint("email"),)
 
+    def get_sections(self, student_id):
+        from app.models.courses import CourseSection, CourseEnrollment
+
+        sections = (
+            db.session.query(CourseSection)
+            .join(
+                CourseEnrollment, CourseSection.id == CourseEnrollment.course_section_id
+            )
+            .filter(CourseEnrollment.student_id == self.id)
+            .options(
+                joinedload(CourseSection.course), joinedload(CourseSection.instructor)
+            )
+            .all()
+        )
+        return [section.to_dict() for section in sections]
+
     def to_dict(self):
         return {
             "id": self.id,
-            "first_name": self.first_name,
-            "last_name": self.last_name,
+            "name": self.name,
             "docs_folder": self.docs_folder,
             "dob": self.dob,
             "cnic": self.cnic,
@@ -34,11 +50,12 @@ class Students(db.Model):
     def to_dict_short(self):
         return {
             "id": self.id,
-            "last_name": self.last_name,
-            "first_name": self.first_name,
+            "name": self.name,
             "docs_folder": self.docs_folder,
             "email": self.email,
         }
+
+    def to_dict_all(self): ...
 
     def __repr__(self):
         return f"<Student> {self.id}"
