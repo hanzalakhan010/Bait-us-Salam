@@ -9,3 +9,8 @@ class Instructors(db.Model):
     bio = db.Column(db.String(100))
     status = db.Column(db.String(20))
     __table_args__ = (db.UniqueConstraint("email"),)
+    def to_dict_short(self):
+        return {
+            "id":self.id,
+            "instructor_name":self.instructor_name
+        }

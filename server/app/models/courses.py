@@ -50,7 +50,7 @@ class Courses(db.Model):
             "id": self.id,
             "course_name": self.course_name,
             "status": self.status,
-            "section_enrollments": self.section_enrollments(),
+            "sections": self.section_enrollments(),
         }
 
     def total_enrollments(self):
