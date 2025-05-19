@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import './newStudent.css';
 
 interface Student {
-    first_name: string,
-    last_name: string,
+    name: string,
+    father_name: string,
     cnic: string,
     father_cnic: string,
     dob: string,
@@ -16,8 +16,8 @@ interface Student {
 
 const NewStudent: React.FC = () => {
     const [newStudent, setNewStudent] = useState<Student>({
-        first_name: '',
-        last_name: '',
+        name: '',
+        father_name: '',
         cnic: '',
         father_cnic: '',
         dob: "",
@@ -66,21 +66,22 @@ const NewStudent: React.FC = () => {
 
     }
     return (
-        <div className="form-container">
+
+        <div id = 'student'className="form-container">
             <form className="form" onSubmit={createStudent}>
                 <h1 className="form-title">New Student</h1>
                 <div className="form-grid">
                     <div className="form-group">
-                        <label htmlFor="first_name" className="form-label">First Name:</label>
-                        <input type="text" id="first_name" name="first_name" className="form-input" required
-                            value={newStudent.first_name}
-                            onChange={(e) => setNewStudent({ ...newStudent, first_name: e.target.value })} />
+                        <label htmlFor="name" className="form-label">Student Name:</label>
+                        <input type="text" id="name" name="name" className="form-input" required
+                            value={newStudent.name}
+                            onChange={(e) => setNewStudent({ ...newStudent, name: e.target.value })} />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="last_name" className="form-label">Last Name:</label>
-                        <input type="text" id="last_name" name="last_name" className="form-input" required
-                            value={newStudent.last_name}
-                            onChange={(e) => setNewStudent({ ...newStudent, last_name: e.target.value })} />
+                        <label htmlFor="father_name" className="form-label">Father Name:</label>
+                        <input type="text" id="father_name" name="father_name" className="form-input" required
+                            value={newStudent.father_name}
+                            onChange={(e) => setNewStudent({ ...newStudent, father_name: e.target.value })} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="cnic" className="form-label">CNIC/Bay Form</label>

@@ -22,11 +22,6 @@ table{
     padding: 10px;
     color: white;
 }
-.actions button{
-    /* border: none; */
-    
-
-}
 #tableDiv{
     width: 90%;
     margin: 0px auto;
@@ -35,4 +30,65 @@ table{
 }
 table{
     text-align: center;
+}
+
+
+.enrollment-section {
+    width:80%;
+    border-radius: 8px;;
+    /* margin:32px auto; */
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.enrollment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.enrollment-header .form-title {
+    font-size: 20px;
+    margin: 0;
+    text-align: left;
+}
+
+.add-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+}
+
+.add-btn:hover {
+    background-color: #0056b3;
+}
+
+.enrollment-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.enrollment-table th,
+.enrollment-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+.enrollment-table th {
+    background-color: #f0f0f0;
+    font-weight: 600;
+}
+
+.enrollment-table td {
+    color: #333;
 }
