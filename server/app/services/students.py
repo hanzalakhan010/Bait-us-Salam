@@ -8,7 +8,7 @@ def getAllStudents():
     return [student.to_dict_short() for student in students]
 
 
-def editStudentById(student_id, data):
+def editStudentDetailsById(student_id, data):
     student = Students.query.get_or_404(student_id)
     for key, value in data.items():
         if hasattr(student, key):
@@ -22,14 +22,14 @@ def removeStudentById(student_id):
     db.session.commit()
 
 
-def getStudentById(student_id):
+def getStudentDetailsById(student_id):
     student = Students.query.get_or_404(student_id)
     return student.to_dict()
 
 
 def registerStudent(studentDetails: dict):
-    first_name = studentDetails.get("first_name")
-    last_name = studentDetails.get("last_name")
+    name = studentDetails.get("name")
+    father_name = studentDetails.get("father_name")
     cnic = studentDetails.get("cnic")
     father_cnic = studentDetails.get("father_cnic")
     dob = studentDetails.get("dob")
@@ -41,8 +41,8 @@ def registerStudent(studentDetails: dict):
         return jsonify({"error": "Email already registered"}), 400
     try:
         newStudent = Students(
-            first_name=first_name,
-            last_name=last_name,
+            name=name,
+            father_name=father_name,
             cnic=cnic,
             father_cnic=father_cnic,
             dob=dob,
@@ -55,6 +55,12 @@ def registerStudent(studentDetails: dict):
         db.session.commit()
         return jsonify({"message": "Student added successfully"}), 201
     except Exception as error:
-        # print(error)
+        print(studentDetails)
+        print(error)
         db.session.rollback()
         return jsonify({"error": "Can not add student at the moment"}), 400
+
+
+def getStudentById(student_id):
+    student = Students.query.get_or_404(student_id)
+
