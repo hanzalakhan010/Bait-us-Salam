@@ -42,7 +42,7 @@ const NewCourse: React.FC = () => {
 
     }
     return (
-        <div className="form-container">
+        <div id='course' className="form-container">
             <form className="form" onSubmit={addCourse}>
                 <h1 className="form-title">New Course</h1>
                 <div className="form-grid">
