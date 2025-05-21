@@ -1,6 +1,8 @@
 from app.models import db
 from app.models.courses import Courses
 from flask import jsonify
+# from json import d
+from app.models.courses import CourseSection
 
 
 def getAllCourses():
@@ -26,3 +28,28 @@ def addCourse(courseDetails: dict):
         db.session.commit()
         return jsonify({"message": "Course created successfully"}), 201
     return jsonify({"error": "Name or description can't be empty"})
+
+
+def addSection(course_id: int, sectionDetails: dict):
+    title = sectionDetails.get("section_title", "")
+    instructor_id = sectionDetails.get("instructor_id", "")
+    room = sectionDetails.get("room")
+    timings = sectionDetails.get("timings", "")
+    if not any([title, course_id, instructor_id]):
+        return jsonify({"error": "Emtpty fields are not accepted"}), 400
+
+    new_section = CourseSection(
+        title=title,
+        instructor_id=instructor_id,
+        course_id=course_id,
+        room=room,
+        timings=timings,
+    )
+    db.session.add(new_section)
+    db.session.commit()
+    return jsonify({"message": "Section added Succesufully"}), 201
+
+
+def getSectionsByCourse(course_id):
+    sections = CourseSection.query.filter_by(course_id=course_id)
+    return jsonify({"sections": [section.to_dict() for section in sections]})

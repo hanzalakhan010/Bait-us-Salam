@@ -12,5 +12,6 @@ class Instructors(db.Model):
     def to_dict_short(self):
         return {
             "id":self.id,
-            "instructor_name":self.instructor_name
+            "instructor_name":self.instructor_name,
+            "phone":self.phone
         }

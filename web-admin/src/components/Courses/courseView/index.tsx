@@ -4,7 +4,8 @@ import './styles.css'
 import AddSection from "./addSection"
 interface Section {
     title: string,
-    intructor: string,
+    instructor_name: string,
+    enrollment_count:number
 }
 
 interface Course {
@@ -42,7 +43,9 @@ const CourseView: React.FC = () => {
                 <h2>Sections</h2>
                 {course.sections.map((section) => (<div>
                     <h3>{section.title}</h3>
-                    <p>Instructor: {section.intructor}</p>
+                    <p>Instructor: {section.instructor_name}</p>
+                    <p>Enrollments:{section.enrollment_count}</p>
+                    
                 </div>))}
             </div>
 

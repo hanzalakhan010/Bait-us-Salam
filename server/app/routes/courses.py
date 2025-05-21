@@ -1,6 +1,13 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 
-from app.services.courses import getAllCourses, addCourse, getCourseById
+from app.services.courses import (
+    getAllCourses,
+    addCourse,
+    getCourseById,
+    getSectionsByCourse,
+    addSection,
+)
+from app.models.courses import CourseSection
 
 courses_blueprint = Blueprint("courses", __name__)
 
@@ -17,3 +24,16 @@ def CourseManagment():
 def CourseManagmentById(course_id):
     if request.method == "GET":
         return getCourseById(course_id=course_id)
+
+
+@courses_blueprint.route("/course_sections", methods=["GET", "POST"])
+def SectionManagementByCourse():
+    course_id = request.args.get("course_id")
+    print(request.args)
+    if not course_id:
+        return jsonify({"error": "Course ID can't be null"})
+    if request.method == "GET":
+        return getSectionsByCourse(course_id=course_id)
+    
+    elif request.method == "POST":
+        return addSection(course_id=course_id,sectionDetails=request.json)

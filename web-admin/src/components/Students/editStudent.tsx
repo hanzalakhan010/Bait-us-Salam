@@ -111,7 +111,7 @@ const EditStudent: React.FC = () => {
 
                             required
                             value={student.dob}
-                            onChange={(e) => setStudent({ ...student, age: parseInt(e.target.value) })} />
+                            onChange={(e) => setStudent({ ...student, dob: e.target.value })} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="address" className="form-label">Address:</label>

@@ -5,9 +5,9 @@ from flask import Blueprint, request
 instructors_blueprint = Blueprint("instructors", __name__)
 
 
-@instructors_blueprint.route("/", methods=["GET"])
+@instructors_blueprint.route("/", methods=["GET","POST"])
 def InstructorsManagement():
     if request.method == "GET":
         return getAllActiveInstructors()
     elif request.method == "POST":
-        return addInstructor(instructor_details=request.json)
+        return addInstructor(instructor_details=request.json),201

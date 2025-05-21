@@ -30,7 +30,7 @@ class Courses(db.Model):
                 {
                     "section_id": section.id,
                     "title": section.title,
-                    "instructor_id": section.instructor_id,
+                    "instructor_name": section.instructor.instructor_name,
                     "timings": section.timings,
                     "enrollment_count": section_enrollment_map.get(section.id, 0),
                 }

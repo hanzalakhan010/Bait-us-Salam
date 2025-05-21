@@ -6,7 +6,7 @@ from app.models import db
 def getAllActiveInstructors():
     instructors = Instructors.query.all()
     return (
-        jsonify({"instructors": [instructor.to_dict() for instructor in instructors]}),
+        jsonify({"instructors": [instructor.to_dict_short() for instructor in instructors]}),
         200,
     )
 
@@ -18,7 +18,7 @@ def addInstructor(instructor_details: dict):
     phone = instructor_details.get("phone", "")
     bio = instructor_details.get("bio", "")
     status = "active"
-    if not any([instructor_name, email, phone]):
+    if not all([instructor_name, email, phone]):
         return jsonify({"error": 'These details cant"t be left empty'})
     new_instructor = Instructors(
         instructor_name=instructor_name,

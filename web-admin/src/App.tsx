@@ -10,6 +10,8 @@ import SingleStudent from './components/Students/singleStudent';
 import Courses from './components/Courses';
 import NewCourse from './components/Courses/newCourse';
 import CourseView from './components/Courses/courseView';
+import Instructors from './components/Instructors';
+import NewInstructor from './components/Instructors/newInstructor';
 
 function App() {
   const [tab, setTab] = useState('dashboard')
@@ -60,6 +62,9 @@ function App() {
           <Route path="/courses" element={<Courses />} />
           <Route path="/courseActions/new" element={<NewCourse />} />
           <Route path='/courses/:id' element={<CourseView />} />
+          {/* For Instructors */}
+          <Route path="/instructors" element={<Instructors />} />
+          <Route path="/instructorActions/new" element={<NewInstructor />} />
 
         </Routes>
         {/* <div id='tab'>
