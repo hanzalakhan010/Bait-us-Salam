@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom"
 
 interface Student {
     name: string,
+    father_name:string,
     cnic: string,
     father_cnic: string,
     dob: string,
@@ -15,6 +16,7 @@ const EditStudent: React.FC = () => {
     const [editing, setEditing] = useState(false)
     const [student, setStudent] = useState<Student>({
         name: '',
+        father_name:'',
         cnic: '',
         father_cnic: '',
         dob: '',
@@ -87,7 +89,14 @@ const EditStudent: React.FC = () => {
                             value={student.name}
                             onChange={(e) => setStudent({ ...student, name: e.target.value })} />
                     </div>
-
+                    <div className="form-group">
+                        <label htmlFor="father_name" className="form-label">Father Name:</label>
+                        <input type="text" id="father_name" name="father_name" className="form-input"
+                            disabled={!editing}
+                            required
+                            value={student.father_name}
+                            onChange={(e) => setStudent({ ...student, father_name: e.target.value })} />
+                    </div>
                     <div className="form-group">
                         <label htmlFor="cnic" className="form-label">CNIC/Bay Form</label>
                         <input type="text" id="cnic" name="cnic" className="form-input" required

@@ -19,12 +19,7 @@ const Courses: React.FC = () => {
                     </tr>
                 </thead>
                 <tbody id="enrollment-body">
-                    <tr>
-                        <td>Math 101</td>
-                        <td>Section A</td>
-                        <td>Mr. Rehman</td>
-                        <td>Mon/Wed 10:00–11:30</td>
-                    </tr>
+                   
                 </tbody>
             </table>
         </div>

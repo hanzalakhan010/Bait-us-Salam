@@ -6,6 +6,9 @@ interface Instructor {
     id: number,
     instructor_name: string
 }
+interface AddSectionProp {
+    setAddSection: React.Dispatch<React.SetStateAction<boolean>>
+}
 interface formData {
     section_title: string,
     instructor_id: number,
@@ -15,7 +18,7 @@ interface formData {
     end_time: string,
     room: string
 }
-const AddSection: React.FC = () => {
+const AddSection: React.FC<AddSectionProp> = ({ setAddSection }) => {
     let [instructors, setInstructors] = useState<Array<Instructor>>([])
     let [message, setMessage] = useState('')
     let [error, setError] = useState('')
@@ -57,6 +60,7 @@ const AddSection: React.FC = () => {
         let data = await response.json()
         if (response.status == 201) {
             setMessage(data.message)
+            setAddSection(false)
             setError('')
         }
         else {

@@ -5,7 +5,7 @@ import AddSection from "./addSection"
 interface Section {
     title: string,
     instructor_name: string,
-    enrollment_count:number
+    enrollment_count: number
 }
 
 interface Course {
@@ -39,13 +39,13 @@ const CourseView: React.FC = () => {
                 <button
                     onClick={() => { setAddSection(!addSection) }}
                     style={{ backgroundColor: addSection ? 'red' : '#007bff' }}>{addSection ? "Cancel" : "+ Add Section"}</button>
-                {addSection ? <AddSection /> : null}
+                {addSection ? <AddSection setAddSection={setAddSection} /> : null}
                 <h2>Sections</h2>
                 {course.sections.map((section) => (<div>
                     <h3>{section.title}</h3>
                     <p>Instructor: {section.instructor_name}</p>
                     <p>Enrollments:{section.enrollment_count}</p>
-                    
+
                 </div>))}
             </div>
 
