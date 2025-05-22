@@ -36,6 +36,7 @@ class Students(db.Model):
         return {
             "id": self.id,
             "name": self.name,
+            "father_name":self.father_name,
             "docs_folder": self.docs_folder,
             "dob": self.dob,
             "cnic": self.cnic,
