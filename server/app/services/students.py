@@ -1,6 +1,7 @@
+from flask import jsonify
+
 from app.models import db
 from app.models.students import Students
-from flask import jsonify
 
 
 def getAllStudents():
@@ -63,5 +64,25 @@ def registerStudent(studentDetails: dict):
 
 def getStudentCoursesById(student_id):
     from app.models.courses import CourseEnrollment, Courses
+
     course_enrollmnents = CourseEnrollment.query.filter_by(student_id=student_id)
-    
+
+
+def getAvailableCoursesById(student_id):
+    from app.models.courses import CourseEnrollment, Courses
+
+    enrolled_course_ids = [
+        row.course_id
+        for row in CourseEnrollment.query.with_entities(CourseEnrollment.course_id)
+        .filter_by(student_id=student_id)
+        .all()
+    ]
+
+    if enrolled_course_ids:
+        available_courses = Courses.query.filter(
+            Courses.id.notin_(enrolled_course_ids), Courses.status == "active"
+        ).all()
+    else:
+        available_courses = Courses.query.filter_by(status = "active").all()
+
+    return [course.to_dict() for course in available_courses]
