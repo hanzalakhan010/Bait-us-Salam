@@ -3,13 +3,12 @@ import React from 'react'
 const Courses: React.FC = () => {
     return (
     <div className='form-container'>
-        <div className="form enrollment-section">
-            <div className="enrollment-header">
+        <div className="section">
+            <div className="header">
                 <h2 className="form-title">Courses Enrolled</h2>
-                <button className="add-btn">+ Add Enrollment</button>
             </div>
 
-            <table className="enrollment-table">
+            <table className="table">
                 <thead>
                     <tr>
                         <th>Course</th>
@@ -18,8 +17,8 @@ const Courses: React.FC = () => {
                         <th>Timings</th>
                     </tr>
                 </thead>
-                <tbody id="enrollment-body">
-                   
+                <tbody id="body">
+                   {}
                 </tbody>
             </table>
         </div>

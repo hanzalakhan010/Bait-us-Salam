@@ -1,0 +1,120 @@
+#studentNav{
+    width: 15%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    /* justify-content: center; */
+    /* align-items: center; */
+    background-color: gray;
+    height: 100dvh;
+    align-self: baseline;
+    position: fixed;
+}
+#studentNav button{
+    border: none;
+    font-size: larger;
+    &:hover{
+        cursor: pointer;
+    }
+}
+#studentTab{
+    width: 75%;
+    position: fixed;
+}
+#student{
+    width: 100%;
+    /* display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center; */
+}
+#studentTab{
+    right: 0px;
+    width: 82%;
+    margin: 0px auto;
+}
+
+.section {
+    width:80%;
+    border-radius: 8px;;
+    /* margin:32px auto; */
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.header .form-title {
+    font-size: 20px;
+    margin: 0;
+    text-align: left;
+}
+
+/* .add-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+} */
+
+.add-btn:hover {
+    background-color: #0056b3;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.table th,
+.table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+.table th {
+    background-color: #f0f0f0;
+    font-weight: 600;
+}
+
+.table td {
+    color: #333;
+}
+
+
+
+@media screen and (max-width: 1000px) {
+    #studentNav {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        margin: 5px auto;
+        width: 90%;
+        height: auto;
+        position: relative;
+    }
+    #studentTab {
+        width: 90%;
+        margin:5px auto;
+        position: relative;
+        right: 0;
+    }
+    #student {
+        flex-direction: column;
+    }
+}
