@@ -13,7 +13,7 @@ nav {
     /* box-sizing: border-box; */
     position: sticky;
     top: 0px;
-
+    z-index: 1;
 }
 
 nav a {
