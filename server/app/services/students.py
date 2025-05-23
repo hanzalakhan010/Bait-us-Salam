@@ -63,9 +63,23 @@ def registerStudent(studentDetails: dict):
 
 
 def getStudentCoursesById(student_id):
-    from app.models.courses import CourseEnrollment, Courses
+    from app.models.courses import CourseEnrollment, Courses, CourseSection
 
-    course_enrollmnents = CourseEnrollment.query.filter_by(student_id=student_id)
+    results = (
+        db.session.query(Courses, CourseSection)
+        .join(CourseEnrollment, Courses.id == CourseEnrollment.course_id)
+        .join(CourseSection, CourseSection.id == CourseEnrollment.course_section_id)
+        .filter(CourseEnrollment.student_id == student_id)
+        .all()
+    )
+    return jsonify(
+        {
+            "": [
+                {"course": course.to_dict(), "section": section.to_dict()}
+                for course, section in results
+            ]
+        }
+    )
 
 
 def getAvailableCoursesById(student_id):
@@ -83,6 +97,6 @@ def getAvailableCoursesById(student_id):
             Courses.id.notin_(enrolled_course_ids), Courses.status == "active"
         ).all()
     else:
-        available_courses = Courses.query.filter_by(status = "active").all()
+        available_courses = Courses.query.filter_by(status="active").all()
 
     return [course.to_dict() for course in available_courses]

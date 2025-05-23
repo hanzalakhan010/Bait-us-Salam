@@ -12,7 +12,7 @@ def getAllCourses():
 
 def getCourseById(course_id):
     course = Courses.query.get_or_404(course_id)
-    return jsonify({"course": course.to_dict()})
+    return jsonify({"course": course.to_dict_details()})
 
 
 def addCourse(courseDetails: dict):
