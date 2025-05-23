@@ -1,73 +1,37 @@
 #course {
-    display: flex;
-    flex-direction: column;
-    width: 80%;
-    margin: 10px auto;
-    justify-content: center;
-    align-items: center;
-}
-
-#course #sections {
-    display: flex;
-    flex-direction: column;
-
     width: 100%;
-    border: .2px solid gray;
 }
 
-#course #sections button {
-    align-self: flex-end;
-    margin: 10px;
-    border: none;
-    padding: 10px;
-    color: white;
-    background-color: #007bff;
-}
-
-#course h2 {
-    text-align: center;
-}
-
-#addSection {
+#courseNav {
+    width: 15%;
     display: flex;
     flex-direction: column;
-    width: 80%;
-    margin: 2px auto;
-    border: .2px solid gray;
-    padding: 5px;
-}
-
-#addSection input,
-#addSection select {
-    font-size: medium;
-}
-
-#addSection #days {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-}
-
-#days p {
-    padding: 5px;
-    border: .1px solid black;
-    border-radius: 5px;
-}
-input[type = 'submit']{
-    margin-top: 10px;
-    margin-bottom: 10px;
-    background-color: #007bff;
+    gap: 10px;
     padding: 10px;
+    /* justify-content: center; */
+    /* align-items: center; */
+    background-color: gray;
+    height: 100dvh;
+    align-self: baseline;
+    position: fixed;
+}
+
+#courseNav button {
     border: none;
-    border-radius: 10px;
-    &:hover{
+    font-size: larger;
+
+    &:hover {
         cursor: pointer;
     }
 }
 
-#sections div{
-    border: .1px solid gray;
-    margin: 10px;
-    padding: 10px;
+#courseTab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: scroll;
+    height: 100dvh;
+    width: 85%;
+    position: fixed;
+    right: 0px;
 }
