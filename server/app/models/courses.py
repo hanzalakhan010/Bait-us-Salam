@@ -10,33 +10,6 @@ class Courses(db.Model):
     status = db.Column(db.String(20))
     # course_sections = db.relationship("CourseSection", backref="course", lazy="joined")
 
-    def section_enrollments(self):
-        section_counts = (
-            db.session.query(
-                CourseEnrollment.course_section_id,
-                func.count(CourseEnrollment.id).label("enrollment_count"),
-            )
-            .filter(CourseEnrollment.course_id == self.id)
-            .group_by(CourseEnrollment.course_section_id)
-            .all()
-        )
-
-        section_enrollment_map = {sec_id: count for sec_id, count in section_counts}
-
-        # Build output list of sections with enrollments
-        sections_with_counts = []
-        for section in self.course_sections:
-            sections_with_counts.append(
-                {
-                    "section_id": section.id,
-                    "title": section.title,
-                    "instructor_name": section.instructor.instructor_name,
-                    "timings": section.timings,
-                    "enrollment_count": section_enrollment_map.get(section.id, 0),
-                }
-            )
-        return sections_with_counts
-
     def to_dict_short(self):
         return {
             "id": self.id,
@@ -45,12 +18,12 @@ class Courses(db.Model):
             "enrollments": self.total_enrollments(),
         }
 
-    def to_dict(self):
+    def to_dict_details(self):
         return {
             "id": self.id,
+            "course_description": self.course_description,
             "course_name": self.course_name,
             "status": self.status,
-            "sections": self.section_enrollments(),
         }
 
     def total_enrollments(self):
@@ -80,7 +53,9 @@ class CourseSection(db.Model):
             "room": self.room,
             "timings": self.timings,
             "course_name": self.course.course_name if self.course else None,
-            "instructor_name": self.instructor.instructor_name if self.instructor else None,
+            "instructor_name": (
+                self.instructor.instructor_name if self.instructor else None
+            ),
         }
 
 
