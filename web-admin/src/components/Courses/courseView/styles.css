@@ -35,3 +35,62 @@
     position: fixed;
     right: 0px;
 }
+
+#sections {
+    display: flex;
+    flex-direction: column;
+}
+
+#sections #sectionsContainer {
+
+    display: grid;
+    grid-template-columns: 1fr 1fr ;
+    gap: 10px;
+}
+
+#sections #section {
+    /* border-bottom: .2px solid gray; */
+    border: .2px solid gray;
+    padding: 5px;
+}
+
+#sections #addBtn {
+    margin: 10px;
+    font-size: larger;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    padding: 5px;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+
+@media screen and (max-width: 1000px) {
+    #courseNav {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        margin: 5px auto;
+        width: 90%;
+        height: auto;
+        position: relative;
+    }
+    #sections #sectionsContainer {
+        grid-template-columns: 1fr;
+    }
+
+    #courseTab {
+        width: 90%;
+        margin: 5px auto;
+        position: relative;
+        right: 0;
+    }
+
+    #course {
+        flex-direction: column;
+    }
+}
