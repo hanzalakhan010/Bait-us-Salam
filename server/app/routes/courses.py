@@ -26,14 +26,11 @@ def CourseManagmentById(course_id):
         return getCourseById(course_id=course_id)
 
 
-@courses_blueprint.route("/course_sections", methods=["GET", "POST"])
-def SectionManagementByCourse():
-    course_id = request.args.get("course_id")
-    print(request.args)
+@courses_blueprint.route("/<int:course_id>/sections", methods=["GET", "POST"])
+def SectionManagementByCourse(course_id):
     if not course_id:
         return jsonify({"error": "Course ID can't be null"})
     if request.method == "GET":
         return getSectionsByCourse(course_id=course_id)
-    
     elif request.method == "POST":
-        return addSection(course_id=course_id,sectionDetails=request.json)
+        return addSection(course_id=course_id, sectionDetails=request.json)

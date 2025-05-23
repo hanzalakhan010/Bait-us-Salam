@@ -7,15 +7,19 @@ from app.services.students import (
     removeStudentById,
     getAllStudents,
     registerStudent,
+    getAvailableCoursesById,
 )
 
 student_blueprint = Blueprint("students", __name__)
 
 
 @student_blueprint.route("/<int:student_id>/courses", methods=["GET", "POST"])
-def StudentByManagementById(student_id):
+def StudentCourseManagementById(student_id):
     if request.method == "GET":
-        ...
+        available_courses = request.args.get("courses")
+        if available_courses:
+            return getAvailableCoursesById(student_id=student_id)
+        return 
 
 
 @student_blueprint.route(
