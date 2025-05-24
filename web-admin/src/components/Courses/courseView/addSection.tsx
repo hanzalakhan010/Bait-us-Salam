@@ -47,7 +47,7 @@ const AddSection: React.FC<AddSectionProp> = ({ setAddSection }) => {
         event.preventDefault();
         let timings = formData.days.map((day: string) => ({ 'day': day, timings: { start: formData.start_time, end: formData.end_time } }));
 
-        let response = await fetch(`http://localhost:5000/api/v1/courses/course_sections?course_id=${id}`,
+        let response = await fetch(`http://localhost:5000/api/v1/courses/${id}/sections`,
             {
                 method: "POST",
                 headers: {
@@ -88,12 +88,14 @@ const AddSection: React.FC<AddSectionProp> = ({ setAddSection }) => {
             <form id='addSection' onSubmit={addSection}>
                 <h4>Section Title</h4>
                 <input placeholder='Section title' name='section_title'
+                required
                     value={formData.section_title}
                     onChange={(e) => setFormData({ ...formData, section_title: e.target.value })}
                 />
 
                 <h4>Instructors</h4>
-                <select name='instructor' value={formData.instructor_id} onChange={(e) => setFormData({ ...formData, instructor_id: parseInt(e.target.value) })}>
+                <select name='instructor' value={formData.instructor_id} onChange={(e) => setFormData({ ...formData, instructor_id: parseInt(e.target.value) })}
+                    required>
                     {instructors.map((instructor) => <option key={instructor.id} value={instructor.id}>{instructor.instructor_name}</option>)}
                 </select>
                 <h4>Days</h4>
@@ -129,9 +131,9 @@ const AddSection: React.FC<AddSectionProp> = ({ setAddSection }) => {
                 <input placeholder='Room' name='room' value={formData.room}
                     onChange={(e) => { setFormData({ ...formData, room: e.target.value }) }}
                 />
-                <input type='submit' value='Add' />
                 <p>{message}</p>
                 <p>{error}</p>
+                <button type='submit' value='Add' >Add</button>
             </form>
         </div>
     )

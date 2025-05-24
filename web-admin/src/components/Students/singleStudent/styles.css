@@ -7,7 +7,7 @@
     /* justify-content: center; */
     /* align-items: center; */
     background-color: gray;
-    height: 100dvh;
+    height: 90dvh;
     align-self: baseline;
     position: fixed;
 }
@@ -21,6 +21,9 @@
 #studentTab{
     width: 75%;
     position: fixed;
+    right: 0px;
+    width: 82%;
+    margin: 0px auto;
 }
 #student{
     width: 100%;
@@ -28,11 +31,6 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center; */
-}
-#studentTab{
-    right: 0px;
-    width: 82%;
-    margin: 0px auto;
 }
 
 .section {
@@ -73,27 +71,6 @@
     background-color: #0056b3;
 }
 
-.table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-}
-
-.table th,
-.table td {
-    padding: 10px 12px;
-    border-bottom: 1px solid #ddd;
-    text-align: left;
-}
-
-.table th {
-    background-color: #f0f0f0;
-    font-weight: 600;
-}
-
-.table td {
-    color: #333;
-}
 
 
 

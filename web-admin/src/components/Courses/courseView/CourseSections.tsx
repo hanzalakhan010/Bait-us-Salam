@@ -27,22 +27,25 @@ const CourseSections: React.FC = () => {
     }
     useEffect(() => {
         loadSections()
-    }, [])
+    }, [addSection])
     return (
         // <div id='course'>
-            <div id='sections'>
-                <button
-                    onClick={() => { setAddSection(!addSection) }}
-                    style={{ backgroundColor: addSection ? 'red' : '#007bff' }}>{addSection ? "Cancel" : "+ Add Section"}</button>
-                {addSection ? <AddSection setAddSection={setAddSection} /> : null}
-                <h2>Sections</h2>
-                {sections.map((section) => (<div>
-                    <h3>{section.title}</h3>
-                    <p>Instructor: {section.instructor_name}</p>
-                    <p>Enrollments:{section.enrollment_count}</p>
-
-                </div>))}
-            </div>
+        <div id='sections'>
+            <h2>Sections</h2>
+            {addSection ? <AddSection setAddSection={setAddSection} /> : (
+                <div id='sectionsContainer'>
+                    {sections.map((section) => (<div id='section'>
+                        <h3>{section.title}</h3>
+                        <p>Instructor: {section.instructor_name}</p>
+                        <p>Enrollments:{section.enrollment_count}</p>
+                    </div>))}
+                </div>
+            )}
+            <button
+                id='addBtn'
+                onClick={() => { setAddSection(!addSection) }}
+                style={{ backgroundColor: addSection ? 'red' : '#007bff' }}>{addSection ? "Cancel" : "+ Add Section"}</button>
+        </div>
 
         // </div>
     )

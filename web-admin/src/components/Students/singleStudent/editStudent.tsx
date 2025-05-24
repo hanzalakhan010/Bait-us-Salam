@@ -33,7 +33,7 @@ const EditStudent: React.FC = () => {
     const editStudent = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
-        let response = await fetch(`http://localhost:5000/api/v1/students/${id}/details/`,
+        let response = await fetch(`http://localhost:5000/api/v1/students/${id}/details`,
             {
                 method: "PATCH",
                 headers: {
@@ -56,7 +56,7 @@ const EditStudent: React.FC = () => {
     }
     const loadStudentDetails = async () => {
         try {
-            let response = await fetch(`http://localhost:5000/api/v1/students/${id}/details/`);
+            let response = await fetch(`http://localhost:5000/api/v1/students/${id}/details`);
             if (response.status === 200) {
                 let data = await response.json();
                 setStudent(data);
