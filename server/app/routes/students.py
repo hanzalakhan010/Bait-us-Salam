@@ -8,25 +8,34 @@ from app.services.students import (
     getAllStudents,
     registerStudent,
     getAvailableCoursesById,
+    getApplicationByStudent,
+    getStudentCoursesById,
 )
 
 student_blueprint = Blueprint("students", __name__)
 
 
-@student_blueprint.route("/<int:student_id>/courses", methods=["GET", "POST"])
+@student_blueprint.route("/<int:student_id>/applications", methods=["GET", "POST"])
+def StudentApplicationManagementById(student_id):
+    if request.method == "GET":
+        return getApplicationByStudent(student_id=student_id)
+
+
+@student_blueprint.route("/<int:student_id>/available_courses", methods=["GET"])
+def StudentAvailableCourseManagementById(student_id):
+    return getAvailableCoursesById(student_id=student_id)
+
+
+@student_blueprint.route("/<int:student_id>/enrolled_courses", methods=["GET", "POST"])
 def StudentCourseManagementById(student_id):
     if request.method == "GET":
-        available_courses = request.args.get("courses")
-        if available_courses:
-            return getAvailableCoursesById(student_id=student_id)
-        return 
+        return getStudentCoursesById(student_id=student_id)
 
 
 @student_blueprint.route(
-    "/<int:student_id>/details/", methods=["GET", "PATCH", "DELETE"]
+    "/<int:student_id>/details", methods=["GET", "PATCH", "DELETE"]
 )
 def StudentDetailsManagmentById(student_id):
-    # student = Students.query.get_or_404(student_id)
     if request.method == "GET":
         return jsonify(getStudentDetailsById(student_id=student_id)), 200
 
@@ -36,8 +45,10 @@ def StudentDetailsManagmentById(student_id):
         return jsonify({"message": "Student updated successfully"}), 200
 
     elif request.method == "DELETE":
-        removeStudentById(student_id=student_id)
-        return jsonify({"message": "Student deleted successfully"}), 200
+
+        if removeStudentById(student_id=student_id):
+            return jsonify({"message": "Student deleted successfully"}), 200
+        return jsonify({"error": "Error deleting student"}), 401
 
 
 @student_blueprint.route("/", methods=["GET", "POST"])

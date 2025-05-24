@@ -1,5 +1,6 @@
-from app.models import db
 from sqlalchemy import func
+
+from app.models import db
 
 
 class Courses(db.Model):
@@ -8,6 +9,7 @@ class Courses(db.Model):
     course_name = db.Column(db.String(20))
     course_description = db.Column(db.String(100))
     status = db.Column(db.String(20))
+    requirements = db.Column(db.JSON)
     # course_sections = db.relationship("CourseSection", backref="course", lazy="joined")
 
     def to_dict_short(self):
@@ -46,6 +48,16 @@ class CourseSection(db.Model):
     course = db.relationship(Courses, backref="course_sections")
     instructor = db.relationship("Instructors", backref="course_sections")
 
+    def enrollements(self):
+        from sqlalchemy import func
+
+        enrollment_count = (
+            db.session.query(func.count(CourseEnrollment.id))
+            .filter(CourseEnrollment.course_section_id == self.id)
+            .scalar()
+        )
+        return enrollment_count
+
     def to_dict(self):
         return {
             "id": self.id,
@@ -56,6 +68,7 @@ class CourseSection(db.Model):
             "instructor_name": (
                 self.instructor.instructor_name if self.instructor else None
             ),
+            "enrollment_count": self.enrollements(),
         }
 
 
@@ -90,12 +103,12 @@ class Exams(db.Model):
 
 
 class CourseSession(db.Model):
-    __tablename__ = "course_session"
+    __tablename__ = "course_sessions"
     id = db.Column(db.Integer, primary_key=True)
     course_section_id = db.Column(db.Integer, db.ForeignKey("course_sections.id"))
     date = db.Column(db.Date)
     topic = db.Column(db.String(100))
-    instructor_notes = db.Column(db.String(100))
+    instructor_notes = db.Column(db.Text)
     is_cancelled = db.Column(db.Boolean, default=False)
     course_section = db.relationship("CourseSection", backref="course_session")
 

@@ -11,16 +11,27 @@ def getAllStudents():
 
 def editStudentDetailsById(student_id, data):
     student = Students.query.get_or_404(student_id)
-    for key, value in data.items():
-        if hasattr(student, key):
-            setattr(student, key, value)
-    db.session.commit()
+    try:
+
+        for key, value in data.items():
+            if hasattr(student, key):
+                setattr(student, key, value)
+        db.session.commit()
+        return True
+    except:
+        db.session.rollback()
+        return False
 
 
 def removeStudentById(student_id):
     student = Students.query.get_or_404(student_id)
-    db.session.remove(student)
-    db.session.commit()
+    try:
+        db.session.remove(student)
+        db.session.commit()
+        return True
+    except:
+        db.session.rollback()
+        return False
 
 
 def getStudentDetailsById(student_id):
@@ -74,7 +85,7 @@ def getStudentCoursesById(student_id):
     )
     return jsonify(
         {
-            "": [
+            "courses": [
                 {"course": course.to_dict(), "section": section.to_dict()}
                 for course, section in results
             ]
@@ -94,9 +105,18 @@ def getAvailableCoursesById(student_id):
 
     if enrolled_course_ids:
         available_courses = Courses.query.filter(
-            Courses.id.notin_(enrolled_course_ids), Courses.status == "active"
+            Courses.id.notin_(enrolled_course_ids), Courses.status == "inactive"
         ).all()
     else:
-        available_courses = Courses.query.filter_by(status="active").all()
+        available_courses = Courses.query.filter_by(status="inactive").all()
+    print(available_courses)
+    return jsonify({"courses": [course.to_dict_details() for course in available_courses]})
 
-    return [course.to_dict() for course in available_courses]
+
+def getApplicationByStudent(student_id):
+    from app.models.applications import Applications
+
+    applications = Applications.query.filter_by(student_id=student_id)
+    return jsonify(
+        {"applications": [application.to_dict() for application in applications]}
+    )
