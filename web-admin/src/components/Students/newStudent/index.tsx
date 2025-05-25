@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import './newStudent.css';
-
+import { useNavigate } from 'react-router-dom';
 interface Student {
     name: string,
     father_name: string,
@@ -10,11 +9,10 @@ interface Student {
     address: string,
     phone: string,
     email: string,
-    password: string
-    r_password: string
 }
 
 const NewStudent: React.FC = () => {
+    const navigate = useNavigate()
     const [newStudent, setNewStudent] = useState<Student>({
         name: '',
         father_name: '',
@@ -24,19 +22,13 @@ const NewStudent: React.FC = () => {
         address: '',
         phone: '',
         email: '',
-        password: '',
-        r_password: ''
 
     })
     const [error, setError] = useState('')
     const [message, setMessage] = useState('')
 
-    const createStudent = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
+    const createStudent = async () => {
 
-        if (newStudent.password != newStudent.r_password) {
-            setError('Passwords dont match')
-        }
         if (isNaN(new Date(newStudent.dob).getTime())) {
             setError('Date of birth must be in correct format')
         }
@@ -55,6 +47,7 @@ const NewStudent: React.FC = () => {
             if (response.status == 201) {
                 setError('')
                 setMessage(data.message)
+                navigate('/students')
             }
             else {
                 setMessage('')
@@ -67,37 +60,43 @@ const NewStudent: React.FC = () => {
     }
     return (
 
-        <div id = 'student'className="form-container">
-            <form className="form" onSubmit={createStudent}>
+        <div id='student' className="form-container">
+            <div className="form">
                 <h1 className="form-title">New Student</h1>
                 <div className="form-grid">
                     <div className="form-group">
                         <label htmlFor="name" className="form-label">Student Name:</label>
                         <input type="text" id="name" name="name" className="form-input" required
                             value={newStudent.name}
+                            maxLength={30}
                             onChange={(e) => setNewStudent({ ...newStudent, name: e.target.value })} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="father_name" className="form-label">Father Name:</label>
                         <input type="text" id="father_name" name="father_name" className="form-input" required
                             value={newStudent.father_name}
-                            onChange={(e) => setNewStudent({ ...newStudent, father_name: e.target.value })} />
+                            onChange={(e) => setNewStudent({ ...newStudent, father_name: e.target.value })}
+                            maxLength={30}
+                        />
                     </div>
                     <div className="form-group">
                         <label htmlFor="cnic" className="form-label">CNIC/Bay Form</label>
                         <input type="text" id="cnic" name="cnic" className="form-input" required
                             value={newStudent.cnic}
-                            onChange={(e) => setNewStudent({ ...newStudent, cnic: e.target.value })} />
+                            onChange={(e) => setNewStudent({ ...newStudent, cnic: e.target.value })}
+                            maxLength={15} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="father_cnic" className="form-label">Father CNIC</label>
                         <input type="text" id="father_cnic" name="father_cnic" className="form-input" required
                             value={newStudent.father_cnic}
-                            onChange={(e) => setNewStudent({ ...newStudent, father_cnic: e.target.value })} />
+                            onChange={(e) => setNewStudent({ ...newStudent, father_cnic: e.target.value })}
+                            maxLength={15}
+                        />
                     </div>
                     <div className="form-group">
                         <label htmlFor="dob" className="form-label">Date of Birth(DD/MM/YYYY):</label>
-                        <input type="text" id="dob" name="dob" className="form-input"
+                        <input type="date" id="dob" name="dob" className="form-input"
                             required
                             value={newStudent.dob}
                             onChange={(e) => setNewStudent({ ...newStudent, dob: e.target.value })} />
@@ -124,25 +123,14 @@ const NewStudent: React.FC = () => {
                             value={newStudent.email}
                             onChange={(e) => setNewStudent({ ...newStudent, email: e.target.value })} />
                     </div>
-                    <div className="form-group full-width">
-                        <label htmlFor="password" className="form-label">Password:</label>
-                        <input type="password" id="password" name="password" className="form-input"
-                            required
-                            value={newStudent.password}
-                            onChange={(e) => setNewStudent({ ...newStudent, password: e.target.value })} />
-                    </div>
-                    <div className="form-group full-width">
-                        <label htmlFor="r_password" className="form-label">Repeat Password:</label>
-                        <input type="password" id="r_password" name="password" className="form-input"
-                            required
-                            value={newStudent.r_password}
-                            onChange={(e) => setNewStudent({ ...newStudent, r_password: e.target.value })} />
+                   
+                    <p className='error'>{error}</p>
+                    <p className='success'>{message}</p>
+                    <div className="form-group">
+                        <button onClick={createStudent} className="form-button">Submit</button>
                     </div>
                 </div>
-                <p className='error'>{error}</p>
-                <p className='success'>{message}</p>
-                <button className="form-button">Submit</button>
-            </form>
+            </div>
         </div>
     );
 };

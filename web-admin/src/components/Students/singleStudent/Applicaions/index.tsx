@@ -6,7 +6,7 @@ const Applicaions: React.FC = () => {
     const { id } = useParams()
     const [addApplication, setAddApplication] = useState(false)
     const loadApplications = async () => {
-        let response = await fetch(`http://localhost:5000/api/v1/students/${id}/applications`)
+        let response = await fetch(`http://localhost:5000/api/v1/students/${id}/applications/`)
         let data = await response.json()
         console.log(data)
     }
@@ -15,7 +15,7 @@ const Applicaions: React.FC = () => {
     }, [])
     return (
         <div className='form-container'>
-            <div className="section">
+            {/* <div className="section"> */}
                 <div className="header">
                     <h2 className="form-title">Applicaions</h2>
                 </div>
@@ -38,7 +38,7 @@ const Applicaions: React.FC = () => {
                         </tbody>
                     </table>
                 )}
-            </div>
+            {/* </div> */}
 
         </div>)
 }

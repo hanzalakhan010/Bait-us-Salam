@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 const Courses: React.FC = () => {
     const { id } = useParams()
     const loadCourses = async () => {
-        let response = await fetch(`http://localhost:5000/api/v1/students/${id}/enrolled_courses`)
+        let response = await fetch(`http://localhost:5000/api/v1/students/${id}/enrolled_courses/`)
         let data = await response.json()
         console.log(data)
     }

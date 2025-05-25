@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom"
 
 interface Student {
     name: string,
-    father_name:string,
+    father_name: string,
     cnic: string,
     father_cnic: string,
     dob: string,
@@ -16,7 +16,7 @@ const EditStudent: React.FC = () => {
     const [editing, setEditing] = useState(false)
     const [student, setStudent] = useState<Student>({
         name: '',
-        father_name:'',
+        father_name: '',
         cnic: '',
         father_cnic: '',
         dob: '',
@@ -30,10 +30,9 @@ const EditStudent: React.FC = () => {
     const navigate = useNavigate();
     const [error, setError] = useState('')
     const [message, setMessage] = useState('')
-    const editStudent = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
+    const editStudent = async () => {
 
-        let response = await fetch(`http://localhost:5000/api/v1/students/${id}/details`,
+        let response = await fetch(`http://localhost:5000/api/v1/students/${id}/details/`,
             {
                 method: "PATCH",
                 headers: {
@@ -56,10 +55,15 @@ const EditStudent: React.FC = () => {
     }
     const loadStudentDetails = async () => {
         try {
-            let response = await fetch(`http://localhost:5000/api/v1/students/${id}/details`);
+            let response = await fetch(`http://localhost:5000/api/v1/students/${id}/details/`);
             if (response.status === 200) {
                 let data = await response.json();
-                setStudent(data);
+                const formattedDob = data.dob ? new Date(data.dob).toISOString().split('T')[0] : '';
+
+                setStudent({
+                    ...data.student,
+                    dob: formattedDob, // Set the formatted `dob`
+                });
             } else if (response.status === 404) {
                 // alert("Student not found");
                 navigate('/students')
@@ -78,7 +82,7 @@ const EditStudent: React.FC = () => {
     return (<>
 
         <div className="form-container">
-            <form className="form" onSubmit={editStudent}>
+            <div className="form">
                 <h1 className="form-title">Edit Student</h1>
                 <div className="form-grid">
                     <div className="form-group">
@@ -114,10 +118,9 @@ const EditStudent: React.FC = () => {
                             onChange={(e) => setStudent({ ...student, father_cnic: e.target.value })} />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="age" className="form-label">Date of Birth</label>
-                        <input type="text" id="dob" name="dob" className="form-input"
+                        <label htmlFor="dob" className="form-label">Date of Birth</label>
+                        <input type="date" id="dob" name="dob" className="form-input"
                             disabled={!editing}
-
                             required
                             value={student.dob}
                             onChange={(e) => setStudent({ ...student, dob: e.target.value })} />
@@ -126,7 +129,6 @@ const EditStudent: React.FC = () => {
                         <label htmlFor="address" className="form-label">Address:</label>
                         <input type="text" id="address" name="address" className="form-input"
                             disabled={!editing}
-
                             required
                             value={student.address}
                             onChange={(e) => setStudent({ ...student, address: e.target.value })} />
@@ -148,17 +150,20 @@ const EditStudent: React.FC = () => {
                             value={student.email}
                             onChange={(e) => setStudent({ ...student, email: e.target.value })} />
                     </div>
+                    <div className="form-group">
+
+                        <p className='error'>{error}</p>
+                        <p className='success'>{message}</p>
+                        <button className="form-button" onClick={() => {
+                            if (editing) {
+                                editStudent()
+                            }
+                            setEditing(!editing)
+                        }}>{editing ? "Save" : "Edit"}</button>
+                    </div>
 
                 </div>
-                <p className='error'>{error}</p>
-                <p className='success'>{message}</p>
-                <button className="form-button" onClick={(e) => {
-                    if (!editing) {
-                        e.preventDefault()
-                        setEditing(true)
-                    }
-                }}>{editing ? "Save" : "Edit"}</button>
-            </form>
+            </div>
         </div>
     </>)
 }

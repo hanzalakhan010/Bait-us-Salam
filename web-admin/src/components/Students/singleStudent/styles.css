@@ -24,6 +24,8 @@
     right: 0px;
     width: 82%;
     margin: 0px auto;
+    overflow-y: scroll;
+    height: 90dvh;
 }
 #student{
     width: 100%;

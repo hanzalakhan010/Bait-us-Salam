@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import './newInstructor.css';
-
-
+import {useNavigate} from 'react-router-dom'
 interface Instructor {
     id: number,
     instructor_name: string,
@@ -12,6 +10,7 @@ interface Instructor {
 
 
 const NewInstructor: React.FC = () => {
+    const navigate = useNavigate()
     const [newInstructor, setNewInstructor] = useState<Instructor>({
         id: 0,
         instructor_name: '',
@@ -22,10 +21,7 @@ const NewInstructor: React.FC = () => {
     const [error, setError] = useState('')
     const [message, setMessage] = useState('')
 
-    const addInstructor = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-
-
+    const addInstructor = async () => {
         let response = await fetch('http://localhost:5000/api/v1/instructors/',
             {
                 method: "POST",
@@ -40,6 +36,7 @@ const NewInstructor: React.FC = () => {
         if (response.status == 201) {
             setError('')
             setMessage(data.message)
+            navigate('/instructors')
         }
         else {
             setMessage('')
@@ -51,7 +48,7 @@ const NewInstructor: React.FC = () => {
     }
     return (
         <div id='course' className="form-container">
-            <form className="form" onSubmit={addInstructor}>
+            <div className="form">
                 <h1 className="form-title">New Instructor</h1>
                 <div className="form-grid">
                     <div className="form-group">
@@ -81,12 +78,14 @@ const NewInstructor: React.FC = () => {
                             value={newInstructor.bio}
                             onChange={(e) => setNewInstructor({ ...newInstructor, bio: e.target.value })} />
                     </div>
+                    <div className='form-group'>
+                        <p className='error'>{error}</p>
+                        <p className='success'>{message}</p>
+                        <button className="form-button" onClick={addInstructor}>Add</button>
+                    </div>
 
                 </div>
-                <p className='error'>{error}</p>
-                <p className='success'>{message}</p>
-                <button className="form-button">Add</button>
-            </form>
+            </div>
         </div>
     );
 };

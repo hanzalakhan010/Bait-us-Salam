@@ -4,8 +4,7 @@ import { Link } from 'react-router-dom';
 
 interface Student {
   id: number,
-  last_name: String,
-  first_name: String,
+  name: String,
   docs_folder: string
   email: string
 }
@@ -81,7 +80,7 @@ const Students: React.FC = () => {
                 </td>
 
                 <td>{student.id}</td>
-                <td>{student.first_name} {student.last_name}</td>
+                <td>{student.name} </td>
                 <td>{student.email}</td>
                 <td><Link to={`/students/${student.id}`}>View</Link></td>
               </tr>
