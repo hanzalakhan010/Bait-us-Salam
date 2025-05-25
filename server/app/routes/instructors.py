@@ -10,4 +10,4 @@ def InstructorsManagement():
     if request.method == "GET":
         return getAllActiveInstructors()
     elif request.method == "POST":
-        return addInstructor(instructor_details=request.json),201
+        return addInstructor(instructor_details=request.json)

@@ -15,34 +15,33 @@ from app.services.students import (
 student_blueprint = Blueprint("students", __name__)
 
 
-@student_blueprint.route("/<int:student_id>/applications", methods=["GET", "POST"])
+@student_blueprint.route("/<int:student_id>/applications/", methods=["GET", "POST"])
 def StudentApplicationManagementById(student_id):
     if request.method == "GET":
         return getApplicationByStudent(student_id=student_id)
 
 
-@student_blueprint.route("/<int:student_id>/available_courses", methods=["GET"])
+@student_blueprint.route("/<int:student_id>/available_courses/", methods=["GET"])
 def StudentAvailableCourseManagementById(student_id):
     return getAvailableCoursesById(student_id=student_id)
 
 
-@student_blueprint.route("/<int:student_id>/enrolled_courses", methods=["GET", "POST"])
+@student_blueprint.route("/<int:student_id>/enrolled_courses/", methods=["GET", "POST"])
 def StudentCourseManagementById(student_id):
     if request.method == "GET":
         return getStudentCoursesById(student_id=student_id)
 
 
 @student_blueprint.route(
-    "/<int:student_id>/details", methods=["GET", "PATCH", "DELETE"]
+    "/<int:student_id>/details/", methods=["GET", "PATCH", "DELETE"]
 )
 def StudentDetailsManagmentById(student_id):
     if request.method == "GET":
-        return jsonify(getStudentDetailsById(student_id=student_id)), 200
+        return getStudentDetailsById(student_id=student_id)
 
     elif request.method == "PATCH":
         data = request.json
-        editStudentDetailsById(student_id=student_id, data=data)
-        return jsonify({"message": "Student updated successfully"}), 200
+        return editStudentDetailsById(student_id=student_id, data=data)
 
     elif request.method == "DELETE":
 

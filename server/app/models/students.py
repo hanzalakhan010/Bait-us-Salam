@@ -5,13 +5,13 @@ from sqlalchemy.orm import joinedload
 class Students(db.Model):
     __tablename__ = "students"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(20))
-    father_name = db.Column(db.String(20))
-    cnic = db.Column(db.String(20))
-    father_cnic = db.Column(db.String(20))
+    name = db.Column(db.String(30))
+    father_name = db.Column(db.String(30))
+    cnic = db.Column(db.String(15))
+    father_cnic = db.Column(db.String(15))
     docs_folder = db.Column(db.String(20))
     dob = db.Column(db.DateTime)
-    address = db.Column(db.String(100))
+    address = db.Column(db.String(150))
     phone = db.Column(db.String(15))
     email = db.Column(db.String(50), unique=True, index=True)
     password = db.Column(db.String(20))

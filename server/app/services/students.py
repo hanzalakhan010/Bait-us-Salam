@@ -12,15 +12,14 @@ def getAllStudents():
 def editStudentDetailsById(student_id, data):
     student = Students.query.get_or_404(student_id)
     try:
-
         for key, value in data.items():
             if hasattr(student, key):
                 setattr(student, key, value)
         db.session.commit()
-        return True
+        return jsonify({"message": "Student details updated successfully"}), 200
     except:
         db.session.rollback()
-        return False
+        return jsonify({"error": "Error updating student details"}), 401
 
 
 def removeStudentById(student_id):
@@ -36,7 +35,7 @@ def removeStudentById(student_id):
 
 def getStudentDetailsById(student_id):
     student = Students.query.get_or_404(student_id)
-    return student.to_dict()
+    return jsonify({"student": student.to_dict()}),200
 
 
 def registerStudent(studentDetails: dict):
@@ -67,8 +66,6 @@ def registerStudent(studentDetails: dict):
         db.session.commit()
         return jsonify({"message": "Student added successfully"}), 201
     except Exception as error:
-        print(studentDetails)
-        print(error)
         db.session.rollback()
         return jsonify({"error": "Can not add student at the moment"}), 400
 
@@ -110,7 +107,9 @@ def getAvailableCoursesById(student_id):
     else:
         available_courses = Courses.query.filter_by(status="inactive").all()
     print(available_courses)
-    return jsonify({"courses": [course.to_dict_details() for course in available_courses]})
+    return jsonify(
+        {"courses": [course.to_dict_details() for course in available_courses]}
+    )
 
 
 def getApplicationByStudent(student_id):

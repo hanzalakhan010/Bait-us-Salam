@@ -18,10 +18,12 @@ def getCourseById(course_id):
 def addCourse(courseDetails: dict):
     course_name = courseDetails.get("course_name", "")
     course_description = courseDetails.get("course_description", "")
+    requirements = courseDetails.get('requirements',{})
     if course_name and course_description:
         newCourse = Courses(
             course_name=course_name,
             course_description=course_description,
+            requirements = requirements,
             status="inactive",
         )
         db.session.add(newCourse)
