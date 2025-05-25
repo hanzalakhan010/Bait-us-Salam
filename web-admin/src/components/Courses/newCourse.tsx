@@ -1,30 +1,53 @@
 import React, { useState } from 'react';
-import './newCourse.css';
-
+import { X } from "lucide-react"
+import {useNavigate} from 'react-router-dom'
 interface Course {
     course_name: string,
     course_description: string
 }
+interface Requirements {
+    id: number,
+    field_key: string,
+    type: "upload" | "raw",
+    label: string,
+    description: string,
+    required: boolean
+}
 
 const NewCourse: React.FC = () => {
+    const navigate = useNavigate()
     const [newCourse, setNewCourse] = useState<Course>({
         course_name: '',
         course_description: ''
     })
+    const [requirements, setRequirements] = useState<Requirements[]>([])
     const [error, setError] = useState('')
     const [message, setMessage] = useState('')
+    const handleRequirementChange = (index: number, field: keyof Requirements, value: any) => {
+        const updated = [...requirements];
+        (updated[index][field] as any) = value;
 
-    const addCourse = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
 
+        if (field === 'label') {
+            updated[index].field_key = value
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '_')
+                .replace(/^_+|_+$/g, '');
+        }
 
+        setRequirements(updated);
+    };
+    const removeRequirement = (index: number) => {
+        setRequirements(requirements.filter((_, i) => i !== index))
+    }
+    const addCourse = async () => {
         let response = await fetch('http://localhost:5000/api/v1/courses/',
             {
                 method: "POST",
                 headers: {
                     'Content-Type': "Application/json"
                 },
-                body: JSON.stringify(newCourse)
+                body: JSON.stringify({ ...newCourse, ...{ requirements: requirements } })
 
             }
         )
@@ -32,6 +55,7 @@ const NewCourse: React.FC = () => {
         if (response.status == 201) {
             setError('')
             setMessage(data.message)
+            navigate('/courses')
         }
         else {
             setMessage('')
@@ -43,7 +67,7 @@ const NewCourse: React.FC = () => {
     }
     return (
         <div id='course' className="form-container">
-            <form className="form" onSubmit={addCourse}>
+            <div className="form">
                 <h1 className="form-title">New Course</h1>
                 <div className="form-grid">
                     <div className="form-group">
@@ -59,12 +83,68 @@ const NewCourse: React.FC = () => {
                             value={newCourse.course_description}
                             onChange={(e) => setNewCourse({ ...newCourse, course_description: e.target.value })} />
                     </div>
+                    <div className="form-group">
+                        <button
+                            onClick={() => {
+                                setRequirements([...requirements, {
+                                    id: requirements.length + 1,
+                                    label: '',
+                                    required: true,
+                                    type: 'raw',
+                                    description: '',
+                                    field_key: ''
+                                }])
+                            }}
+                        >Add requirement</button>
 
+                        {requirements.map((req, index) => (
+                            <div>
+                                <p>Requirement {req.id}</p>
+                                <div className='form-group'>
+                                    <label>Label</label>
+                                    <input placeholder='Label'
+                                        value={req.label}
+                                        onChange={(e) => handleRequirementChange(index, 'label', e.target.value)}
+                                    />
+                                </div>
+                                <div className='form-group'>
+                                    <label>Type</label>
+                                    <select
+                                        onChange={(e) => handleRequirementChange(index, 'type', e.target.value as "upload" | "raw")}
+                                    >
+                                        <option value='upload'>Upload</option>
+                                        <option value='raw'>raw</option>
+                                    </select>
+                                </div>
+                                <div className='form-group'>
+                                    <label>Description</label>
+                                    <input placeholder='description'
+                                        value={req.description}
+                                        onChange={(e) => handleRequirementChange(index, 'description', e.target.value)}
+                                    />
+                                </div>
+                                <div className='form-group'>
+                                    <label>Required
+                                        <input type='checkbox'
+                                            checked={req.required}
+                                            onChange={(e) => handleRequirementChange(index, 'required', e.target.checked)}
+                                        />
+                                    </label>
+                                </div>
+                                <div className='form-group'>
+                                    <button onClick={() => removeRequirement(index)}><X /></button>
+                                </div>
+                                <hr />
+                            </div>
+                        ))}
+                    </div>
+                    <p className='error'>{error}</p>
+                    <p className='success'>{message}</p>
+                    <div className="form-group">
+                        <button onClick={addCourse} className="form-button">Add</button>
+                    </div>
                 </div>
-                <p className='error'>{error}</p>
-                <p className='success'>{message}</p>
-                <button className="form-button">Add</button>
-            </form>
+            </div>
         </div>
     );
 };
