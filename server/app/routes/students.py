@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.models.students import Students
 from app.models import db
+from app.services.applications import addApplication
 from app.services.students import (
     editStudentDetailsById,
     getStudentDetailsById,
@@ -19,6 +20,14 @@ student_blueprint = Blueprint("students", __name__)
 def StudentApplicationManagementById(student_id):
     if request.method == "GET":
         return getApplicationByStudent(student_id=student_id)
+    elif request.method == "POST":
+        print(request.headers)
+        return addApplication(
+            files=request.files,
+            course_id=request.headers.get("Course-Id", ""),
+            requirementForm=request.form,
+            student_id=student_id,
+        )
 
 
 @student_blueprint.route("/<int:student_id>/available_courses/", methods=["GET"])

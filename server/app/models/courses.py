@@ -12,21 +12,34 @@ class Courses(db.Model):
     requirements = db.Column(db.JSON)
     # course_sections = db.relationship("CourseSection", backref="course", lazy="joined")
 
-    def to_dict_short(self):
-        return {
+    def to_dict_short(self, role="public"):
+        base = {
             "id": self.id,
             "course_name": self.course_name,
-            "status": self.status,
-            "enrollments": self.total_enrollments(),
         }
+        if role == "admin":
+            base.update(
+                {
+                    "status": self.status,
+                    "enrollments": self.total_enrollments(),
+                }
+            )
+        return base
 
-    def to_dict_details(self):
-        return {
+    def to_dict_details(self, role="public"):
+        base = {
             "id": self.id,
             "course_description": self.course_description,
             "course_name": self.course_name,
-            "status": self.status,
+            "requirements": self.requirements,
         }
+        if role == "admin":
+            base.update(
+                {
+                    "status": self.status,
+                }
+            )
+        return base
 
     def total_enrollments(self):
         total = (

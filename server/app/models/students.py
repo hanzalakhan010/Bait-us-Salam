@@ -9,7 +9,7 @@ class Students(db.Model):
     father_name = db.Column(db.String(30))
     cnic = db.Column(db.String(15))
     father_cnic = db.Column(db.String(15))
-    docs_folder = db.Column(db.String(20))
+    docs_folder = db.Column(db.String(40))
     dob = db.Column(db.DateTime)
     address = db.Column(db.String(150))
     phone = db.Column(db.String(15))

@@ -47,15 +47,17 @@
 
 .header {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    row-gap: 10px;
+    justify-content: center;
     align-items: center;
     margin-bottom: 16px;
 }
 
 .header .form-title {
-    font-size: 20px;
-    margin: 0;
-    text-align: left;
+    font-size: 24px;
+    /* margin: 0; */
+    text-align: center;
 }
 
 /* .add-btn {

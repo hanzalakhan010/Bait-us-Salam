@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X } from "lucide-react"
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 interface Course {
     course_name: string,
     course_description: string
@@ -8,7 +8,7 @@ interface Course {
 interface Requirements {
     id: number,
     field_key: string,
-    type: "upload" | "raw",
+    type: "file" | "text" | "textarea" | "date" | "number" | "email" | "tel" | "url";
     label: string,
     description: string,
     required: boolean
@@ -20,9 +20,9 @@ const NewCourse: React.FC = () => {
         course_name: '',
         course_description: ''
     })
-    const [requirements, setRequirements] = useState<Requirements[]>([])
     const [error, setError] = useState('')
     const [message, setMessage] = useState('')
+    const [requirements, setRequirements] = useState<Requirements[]>([])
     const handleRequirementChange = (index: number, field: keyof Requirements, value: any) => {
         const updated = [...requirements];
         (updated[index][field] as any) = value;
@@ -90,7 +90,7 @@ const NewCourse: React.FC = () => {
                                     id: requirements.length + 1,
                                     label: '',
                                     required: true,
-                                    type: 'raw',
+                                    type: 'file',
                                     description: '',
                                     field_key: ''
                                 }])
@@ -110,10 +110,20 @@ const NewCourse: React.FC = () => {
                                 <div className='form-group'>
                                     <label>Type</label>
                                     <select
-                                        onChange={(e) => handleRequirementChange(index, 'type', e.target.value as "upload" | "raw")}
+                                        onChange={(e) => handleRequirementChange(index, 'type', e.target.value)}
                                     >
-                                        <option value='upload'>Upload</option>
-                                        <option value='raw'>raw</option>
+                                        <option value="file">File Upload</option>
+                                        <option value="text">Short Text</option>
+                                        <option value="textarea">Long Text (Textarea)</option>
+                                        <option value="date">Date</option>
+                                        <option value="number">Number</option>
+                                        <option value="email">Email</option>
+                                        <option value="tel">Phone Number</option>
+                                        <option value="select">Select (Dropdown)</option>
+                                        <option value="checkbox">Checkbox</option>
+                                        <option value="radio">Radio Buttons</option>
+                                        <option value="url">URL / Link</option>
+
                                     </select>
                                 </div>
                                 <div className='form-group'>

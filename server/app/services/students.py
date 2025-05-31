@@ -1,5 +1,5 @@
 from flask import jsonify
-
+import uuid
 from app.models import db
 from app.models.students import Students
 
@@ -35,7 +35,7 @@ def removeStudentById(student_id):
 
 def getStudentDetailsById(student_id):
     student = Students.query.get_or_404(student_id)
-    return jsonify({"student": student.to_dict()}),200
+    return jsonify({"student": student.to_dict()}), 200
 
 
 def registerStudent(studentDetails: dict):
@@ -89,10 +89,11 @@ def getStudentCoursesById(student_id):
         }
     )
 
-
 def getAvailableCoursesById(student_id):
     from app.models.courses import CourseEnrollment, Courses
+    from app.models.applications import Applications
 
+    # Get course IDs from enrollments
     enrolled_course_ids = [
         row.course_id
         for row in CourseEnrollment.query.with_entities(CourseEnrollment.course_id)
@@ -100,17 +101,25 @@ def getAvailableCoursesById(student_id):
         .all()
     ]
 
-    if enrolled_course_ids:
-        available_courses = Courses.query.filter(
-            Courses.id.notin_(enrolled_course_ids), Courses.status == "inactive"
-        ).all()
-    else:
-        available_courses = Courses.query.filter_by(status="inactive").all()
-    print(available_courses)
-    return jsonify(
-        {"courses": [course.to_dict_details() for course in available_courses]}
-    )
+    # Get course IDs from applications
+    applied_course_ids = [
+        row.course_id
+        for row in Applications.query.with_entities(Applications.course_id)
+        .filter_by(student_id=student_id)
+        .all()
+    ]
 
+    # Combine both lists to exclude courses
+    excluded_course_ids = set(enrolled_course_ids + applied_course_ids)
+
+    # Filter courses that are not in the excluded list and have inactive status
+    available_courses = Courses.query.filter(
+        Courses.id.notin_(excluded_course_ids), Courses.status == "inactive"
+    ).all()
+
+    return jsonify(
+        {"courses": [course.to_dict_short() for course in available_courses]}
+    )
 
 def getApplicationByStudent(student_id):
     from app.models.applications import Applications
@@ -119,3 +128,15 @@ def getApplicationByStudent(student_id):
     return jsonify(
         {"applications": [application.to_dict() for application in applications]}
     )
+
+
+def studentDocsFolder(student_id):
+    student = Students.query.get(student_id)
+    if not student:
+        return False
+    if not student.docs_folder:
+        docs_folder = uuid.uuid4()
+        student.docs_folder = docs_folder
+        db.session.commit()
+        return docs_folder
+    return student.docs_folder

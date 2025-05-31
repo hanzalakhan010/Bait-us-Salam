@@ -5,7 +5,7 @@ import CourseSections from "./CourseSections"
 import CourseSessions from "./CourseSessions"
 
 const CourseView: React.FC = () => {
-    const [tab, setTab] = useState('sections')
+    const [tab, setTab] = useState('editDetails')
     return (
         <div id='course'>
             <div id='courseNav'>

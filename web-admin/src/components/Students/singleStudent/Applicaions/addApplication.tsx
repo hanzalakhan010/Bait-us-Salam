@@ -1,36 +1,70 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+interface Requirements {
+    id: number,
+    field_key: string,
+    type: "file" | "text" | "textarea" | "date" | "number" | "email" | "tel" | "url";
+    label: string,
+    description: string,
+    required: boolean,
+    error?: string,
+    value: any
+}
 interface Course {
     course_description: string,
     course_name: string,
     id: number,
-    status: string
+    status: string,
+    requirements: Requirements[]
 }
 
 const AddApplication: React.FC = () => {
     const { id } = useParams()
     const [available_courses, setAvailable_courses] = useState<Course[]>([])
     const [selectedCourse, setSelectedCourse] = useState<Course | null>()
+    const [requirements, setRequirements] = useState<Requirements[]>([])
+
+   
+    const loadSelectedCourse = async (course_id: number) => {
+        setRequirements([])
+        let response = await fetch(`http://localhost:5000/api/v1/courses/${course_id}`)
+        let data = await response.json()
+        if (response.status == 200) {
+            setSelectedCourse(data.course)
+            setRequirements(data.course.requirements)
+        }
+
+    }
+
     const loadAvailableCourse = async () => {
         let response = await fetch(`http://localhost:5000/api/v1/students/${id}/available_courses`)
         let data = await response.json()
-        console.log(data)
         setAvailable_courses(data.courses)
+    }
+    const apply = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        console.log(selectedCourse)
+        if (selectedCourse?.id) {
+            let formData = new FormData(event.currentTarget)
+            // console.log(formData)
+            let response = await fetch(`http://localhost:5000/api/v1/students/${id}/applications/`, {
+                method: "POST",
+                headers: { "Course-Id": selectedCourse.id.toString() },
+                body: formData
+            })
+
+        }
     }
     useEffect(() => {
         loadAvailableCourse()
-    }, [selectedCourse])
+    }, [])
     return (
         <div>
             <h1>Apply for Course</h1>
             <select
                 onChange={(e) => {
-                    const selected = available_courses.find((course) => course.id == parseInt(e.target.value));
-                    console.log(selected)
-                    if (selected) {
-                        setSelectedCourse(selected);
-                    }
+                    loadSelectedCourse(parseInt(e.target.value))
                 }}>
                 <option>Select Course</option>
                 {available_courses.map((available_course) => (<option value={available_course.id}
@@ -42,11 +76,35 @@ const AddApplication: React.FC = () => {
                         <p><i>Course Name: </i>{selectedCourse.course_name}</p>
                         <p><i>Description: </i>{selectedCourse.course_description}</p>
                         <p><i>Course Status: </i>{selectedCourse.status}</p>
+                        <div>
+                            <form onSubmit={apply}>
+                                {requirements?.length ? (
+                                    <>
+                                        <h3>Requirements</h3>
+                                        {requirements?.map((req, index) => (
+                                            <div key={index}>
+                                                <p>Required: {req.label}</p>
+                                                <input type={req.type} placeholder={req.label}
+                                                    // value={req.value}
+                                                    name={req.field_key}
+                                                    required={req.required}
+                                                // onChange={(e) => handleRequirementChange(index, e.target.value)}
+                                                />
+                                                <p><i>{req.description}</i></p>
+                                            </div>
+                                        ))}
+                                    </>
+                                ) : <h3>No additional requirements</h3>}
+                                {selectedCourse ? (
+                                    <input type='submit' value='Apply'></input>
+                                ) : null}
+                            </form>
+
+                        </div>
                     </>
                 ) : null
                 }
             </div>
-            <button>Apply</button>
         </div>
     );
 };
