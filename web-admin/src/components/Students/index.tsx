@@ -14,12 +14,17 @@ const Students: React.FC = () => {
   const [selected, setSelected] = useState<Set<number>>(new Set());
 
   const loadStudents = async () => {
-    try{
-      let response = await fetch('http://localhost:5000/api/v1/students/')
+    try {
+      let response = await fetch('http://localhost:5000/api/v1/students/', {
+        headers: {
+          "Token": localStorage.getItem('token') || '',
+          "Email": localStorage.getItem('email') || ''
+        }
+      })
       let data = await response.json()
       setStudents(data.students)
     }
-    catch{
+    catch {
       alert('Error connecting to server')
     }
   }
