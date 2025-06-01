@@ -17,7 +17,14 @@ const Applicaions: React.FC = () => {
     const [addApplication, setAddApplication] = useState(false)
     const [applications, setApplications] = useState<Application[]>([])
     const loadApplications = async () => {
-        let response = await fetch(`http://localhost:5000/api/v1/students/${id}/applications/`)
+        let response = await fetch(`http://localhost:5000/api/v1/students/${id}/applications/`,
+            {
+                headers: {
+                    "Token": localStorage.getItem('token') || '',
+                    "Email": localStorage.getItem('email') || ''
+                }
+            }
+        )
         let data = await response.json()
         setApplications(data.applications)
     }

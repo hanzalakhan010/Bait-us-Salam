@@ -25,10 +25,17 @@ const AddApplication: React.FC = () => {
     const [selectedCourse, setSelectedCourse] = useState<Course | null>()
     const [requirements, setRequirements] = useState<Requirements[]>([])
 
-   
+
     const loadSelectedCourse = async (course_id: number) => {
         setRequirements([])
-        let response = await fetch(`http://localhost:5000/api/v1/courses/${course_id}`)
+        let response = await fetch(`http://localhost:5000/api/v1/courses/${course_id}`,
+            {
+                headers: {
+                    "Token": localStorage.getItem('token') || '',
+                    "Email": localStorage.getItem('email') || ''
+                }
+            }
+        )
         let data = await response.json()
         if (response.status == 200) {
             setSelectedCourse(data.course)
