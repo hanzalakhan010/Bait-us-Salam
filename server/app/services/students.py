@@ -89,6 +89,7 @@ def getStudentCoursesById(student_id):
         }
     )
 
+
 def getAvailableCoursesById(student_id):
     from app.models.courses import CourseEnrollment, Courses
     from app.models.applications import Applications
@@ -120,6 +121,7 @@ def getAvailableCoursesById(student_id):
     return jsonify(
         {"courses": [course.to_dict_short() for course in available_courses]}
     )
+
 
 def getApplicationByStudent(student_id):
     from app.models.applications import Applications

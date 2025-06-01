@@ -2,7 +2,7 @@ from app.models.applications import Applications
 from flask import jsonify
 from werkzeug.utils import secure_filename
 import os
-from app.utils.fileChecks import allowed_file
+from app.services.auth import AuthRequired
 from app.services.students import studentDocsFolder
 from app.models import db
 import logging
