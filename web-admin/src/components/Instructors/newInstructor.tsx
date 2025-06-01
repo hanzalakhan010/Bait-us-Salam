@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 interface Instructor {
     id: number,
     instructor_name: string,
@@ -26,7 +26,9 @@ const NewInstructor: React.FC = () => {
             {
                 method: "POST",
                 headers: {
-                    'Content-Type': "Application/json"
+                    'Content-Type': "Application/json",
+                    "Token": localStorage.getItem('token') || '',
+                    "Email": localStorage.getItem('email') || ''
                 },
                 body: JSON.stringify(newInstructor)
 
