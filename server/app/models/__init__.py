@@ -9,7 +9,8 @@ from .courses import Courses
 from .instructors import Instructors
 from .applicants import Applicants
 from .applications import Applications
+from .logins import Logins
 
 
 # Optional: define __all__ for IDEs and clean imports
-__all__ = ["db", "Students", "Courses", "Instructors", "Applicants","Applications"]
+__all__ = ["db", "Students", "Courses", "Instructors", "Applicants","Applications","Logins"]
