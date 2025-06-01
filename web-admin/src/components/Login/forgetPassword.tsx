@@ -2,9 +2,11 @@ import React from 'react';
 
 const ForgetPassword: React.FC = () => {
     return (
-        <div>
+        <>
             <h1>Forget Password</h1>
-        </div>
+            <input placeholder='Recovery Email' />
+            <button>Send OTP</button>
+        </>
     );
 };
 

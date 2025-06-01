@@ -5,42 +5,50 @@ interface LoginProps {
     setLogin: React.Dispatch<React.SetStateAction<boolean>>;
 }
 const Login: React.FC<LoginProps> = ({ setLogin }) => {
-    const [state, setState] = useState('')
+    const [forgotPassword, setForgotPassword] = useState(false)
     const [email, setEmail] = useState('')
     const [error, setError] = useState('')
     const [password, setpassword] = useState('')
-    const login = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        let response = await fetch('http://localhost:5000/api/v1/admin/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'Application/json'
-            },
-            body: JSON.stringify({ email, password })
-        })
-        let data = await response.json()
-        if (response.status == 200) {
-            setLogin(true)
+    const login = async () => {
+        try {
+
+            let response = await fetch('http://localhost:5000/api/v1/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'Application/json',
+                
+
+                },
+                body: JSON.stringify({ email, password, role: 'admin' })
+            })
+            let data = await response.json()
+            if (response.status == 201) {
+                setLogin(true)
+                localStorage.setItem('token', data.token)
+                localStorage.setItem('email', email)
+            }
+            else {
+                setError(data.error)
+            }
         }
-        else {
-            setError(data.error)
+        catch {
+            alert('Error connecting to server')
         }
     }
     return (
-        <div>
-            {state == 'forgetPassword' ? <ForgetPassword /> : (
-                <form onSubmit={login}>
+        <div id='loginDiv'>
+            {forgotPassword ? <ForgetPassword /> : (
+                <>
                     <h1>Admin Login</h1>
-                    <div>
-                        <label>Email</label>
-                        <input placeholder='Email' type='email' value={email} onChange={(e) => setEmail(e.target.value)} />
-                        <label>Password</label>
-                        <input placeholder='Password' type='password' value={password} onChange={(e) => setpassword(e.target.value)} />
-                    </div>
+                    <label>Email</label>
+                    <input placeholder='Email' type='email' value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <label>Password</label>
+                    <input placeholder='Password' type='password' value={password} onChange={(e) => setpassword(e.target.value)} />
                     <p>{error}</p>
-                    <button>Login</button>
-                </form>
+                    <button onClick={login}>Login</button>
+                </>
             )}
+            <button onClick={() => setForgotPassword(!forgotPassword)}>{forgotPassword ? "Cancel" : 'Forgot password'} </button>
         </div>
     );
 };
