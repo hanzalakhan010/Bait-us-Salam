@@ -45,7 +45,9 @@ const NewCourse: React.FC = () => {
             {
                 method: "POST",
                 headers: {
-                    'Content-Type': "Application/json"
+                    'Content-Type': "Application/json",
+                    "Token": localStorage.getItem('token') || '',
+                    "Email": localStorage.getItem('email') || ''
                 },
                 body: JSON.stringify({ ...newCourse, ...{ requirements: requirements } })
 

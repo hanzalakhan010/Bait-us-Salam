@@ -14,9 +14,20 @@ const Courses: React.FC = () => {
 
     const loadCourses = async () => {
         try {
-            let response = await fetch('http://localhost:5000/api/v1/courses/')
+            let response = await fetch('http://localhost:5000/api/v1/courses/', {
+                headers: {
+                    "Token": localStorage.getItem('token') || '',
+                    "Email": localStorage.getItem('email') || ''
+                }
+            })
             let data = await response.json()
-            setCourses(data.courses)
+            if (response.ok) {
+                setCourses(data.courses)
+            }
+            else {
+                alert(data.error)
+            }
+
         }
         catch {
             alert('Error connecting to server')
