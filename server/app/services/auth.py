@@ -8,38 +8,44 @@ def AuthRequired(min_level=None, method_levels=None):
     def decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
-            token = request.headers.get("Token")
-            email = request.headers.get("Email")
+            token = request.cookies.get("token")
+            # email = request.headers.get("Email")
 
-            if not token or not email:
-                return jsonify({"error": "Missing credentials"}), 401
+            if not token:
+                return jsonify({"error": "Missing token"}), 401
 
-            login = Logins.query.filter_by(
-                email=email, token=token, is_active=True
-            ).first()
+            login = Logins.query.filter_by(token=token, is_active=True).first()
 
             if not login:
                 return jsonify({"error": "Authentication failed"}), 401
 
             if login.expires_at < datetime.utcnow():
                 return jsonify({"error": "Session expired"}), 401
-            current_method = request.method
-            required_level = None
-            if method_levels and current_method in method_levels:
-                required_level = method_levels[current_method]
-            elif min_level is not None:
-                required_level = min_level
 
-            if required_level is not None and required_level < min_level:
+            if (min_level is not None) and (min_level < login.role_level):
                 return (
-                    jsonify(
-                        {"error": f"Insufficient access level for {current_method}"}
-                    ),
+                    jsonify({"error": f"Insufficient Access rights"}),
                     403,
                 )
+            if method_levels is not None:
+                current_method = request.method
+                if current_method in method_levels:
+                    if method_levels[current_method] < login.role_level:
+                        return (
+                            jsonify({"error": f"Insufficient Access rights"}),
+                            403,
+                        )
 
             return f(*args, **kwargs)
 
         return wrapper
 
     return decorator
+
+
+def checkAuth(token):
+    if token:
+        login = Logins.query.filter_by(token=token, is_active=True).first()
+        if login.expires_at > datetime.utcnow():
+            return jsonify({"message": "Auth Successfull"}), 200
+    return jsonify({"message": "Auth unsucessfull"}), 403

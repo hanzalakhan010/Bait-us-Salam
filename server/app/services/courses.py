@@ -4,22 +4,18 @@ from flask import jsonify
 
 # from json import d
 from app.models.courses import CourseSection
-from app.services.auth import AuthRequired
 
 
-@AuthRequired(min_level=2)
 def getAllCourses():
     courses = Courses.query.all()
     return jsonify({"courses": [course.to_dict_short() for course in courses]}), 200
 
 
-@AuthRequired(min_level=2)
 def getCourseById(course_id):
     course = Courses.query.get_or_404(course_id)
     return jsonify({"course": course.to_dict_details()})
 
 
-@AuthRequired(min_level=1)
 def addCourse(courseDetails: dict):
     course_name = courseDetails.get("course_name", "")
     course_description = courseDetails.get("course_description", "")
@@ -36,7 +32,6 @@ def addCourse(courseDetails: dict):
         return jsonify({"message": "Course created successfully"}), 201
     return jsonify({"error": "Name or description can't be empty"})
 
-@AuthRequired(min_level=1)
 def addSection(course_id: int, sectionDetails: dict):
     title = sectionDetails.get("section_title", "")
     instructor_id = sectionDetails.get("instructor_id", "")
@@ -56,7 +51,6 @@ def addSection(course_id: int, sectionDetails: dict):
     db.session.commit()
     return jsonify({"message": "Section added Succesufully"}), 201
 
-@AuthRequired(min_level=2)
 def getSectionsByCourse(course_id):
     sections = CourseSection.query.filter_by(course_id=course_id)
     return jsonify({"sections": [section.to_dict() for section in sections]})
