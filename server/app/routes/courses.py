@@ -11,8 +11,8 @@ from app.services.courses import (
 courses_blueprint = Blueprint("courses", __name__)
 
 
+@AuthRequired(method_levels={"GET": 3, "POST": 1})
 @courses_blueprint.route("/", methods=["GET", "POST"])
-@AuthRequired(min_level=1)
 def CourseManagment():
     if request.method == "GET":
         return getAllCourses()

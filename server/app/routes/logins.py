@@ -1,9 +1,10 @@
 from flask import Blueprint, request, jsonify
-from app.services.auth import AuthRequired
+from app.services.auth import checkAuth
 
 auth_blueprint = Blueprint("auth", __name__)
 
 from app.services.logins import adminLogin
+
 
 @auth_blueprint.route("/login", methods=["POST"])
 def login():
@@ -27,8 +28,7 @@ def logout():
     return jsonify({"message": "Logout successful"}), 200
 
 
-@auth_blueprint.route("/auth", methods=["GET"])
+@auth_blueprint.route("/auth", methods=["POST"])
 def auth():
-    # This endpoint could be used to check if the user is authenticated
-    # For simplicity, we assume the user is authenticated
-    return jsonify({"message": "User is authenticated"}), 200
+    token = request.cookies.get("token")
+    return checkAuth(token=token)
