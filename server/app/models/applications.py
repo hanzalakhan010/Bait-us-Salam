@@ -1,7 +1,18 @@
 from sqlalchemy import CheckConstraint
 from app.models import db
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.hybrid import hybrid_property
 from datetime import datetime
+
+
+def initialStatus():
+    return [
+        {
+            "status": "Pending",
+            "by": "system",
+            "at": datetime.datetime.utcnow().isoformat(),
+        }
+    ]
 
 
 class Applications(db.Model):
@@ -10,9 +21,9 @@ class Applications(db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=True)
     applicant_id = db.Column(db.Integer, db.ForeignKey("applicants.id"), nullable=True)
     course_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False)
-    exam_status = db.Column(db.String(20), nullable=True, default="pending")
-    interview_status = db.Column(db.String(20), nullable=True, default="pending")
-    status = db.Column(db.String(20), nullable=True, default="pending")
+    exam_status = db.Column(JSONB, default=initialStatus)
+    interview_status = db.Column(JSONB, default=initialStatus)
+    status = db.Column(JSONB)
     comments = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
     requirements = db.Column(db.JSON)
@@ -32,6 +43,22 @@ class Applications(db.Model):
         return self.student or self.applicant
 
     def to_dict(self):
+        base = {
+            "id": self.id,
+            "course_name": self.course.course_name,
+            "created_at": self.created_at,
+            "exam_status": self.exam_status,
+            "interview_status": self.interview_status,
+            "status": self.status,
+            "requirements": self.requirements,
+        }
+        if self.applicant_id:
+            base["applicant_id"] = self.applicant_id
+        elif self.student_id:
+            base["student_id"] = self.student_id
+        return base
+
+    def to_dict_short(self):
         base = {
             "id": self.id,
             "course_name": self.course.course_name,

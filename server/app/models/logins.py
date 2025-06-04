@@ -22,7 +22,7 @@ class Logins(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     role = db.Column(db.String(50), nullable=False)
     role_level = db.Column(db.Integer, default=4)
-    token = db.Column(db.String(50), nullable=False)
+    token = db.Column(db.String(200), nullable=False, unique=True)
     email = db.Column(db.String(40), nullable=False)
     issued_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     expires_at = db.Column(db.DateTime, nullable=False, default=default_expiry)
