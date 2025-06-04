@@ -13,14 +13,9 @@ interface Application {
 const Applicaions: React.FC = () => {
     const [applications, setApplications] = useState<Application[]>([])
     const loadApplications = async () => {
-        let response = await fetch(`http://localhost:5000/api/v1/applications/`, {
-            headers:
-            {
-                "Token": localStorage.getItem('token') || '',
-                "Email": localStorage.getItem('email') || ''
-
-            }
-        })
+        let response = await fetch(`http://localhost:5000/api/v1/applications/`,
+            // 
+        )
         let data = await response.json()
         setApplications(data.applications)
     }

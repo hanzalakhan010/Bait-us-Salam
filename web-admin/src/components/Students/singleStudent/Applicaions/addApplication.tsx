@@ -92,6 +92,7 @@ const AddApplication: React.FC = () => {
                                             <div key={index}>
                                                 <p>Required: {req.label}</p>
                                                 <input type={req.type} placeholder={req.label}
+                                                    accept='image/*'
                                                     // value={req.value}
                                                     name={req.field_key}
                                                     required={req.required}
