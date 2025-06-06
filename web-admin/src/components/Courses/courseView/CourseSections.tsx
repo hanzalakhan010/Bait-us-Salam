@@ -20,7 +20,7 @@ const CourseSections: React.FC = () => {
     const [sections, setSection] = useState<Section[]>(
         [])
     const loadSections = async () => {
-        let response = await fetch(`http://localhost:5000/api/v1/courses/${id}/sections`)
+        let response = await fetch(`http://localhost:5000/api/v1/courses/${id}/sections`,{credentials:"include"})
         let data = await response.json()
         console.log(data)
         setSection(data.sections)

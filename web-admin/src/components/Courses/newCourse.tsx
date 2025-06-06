@@ -44,10 +44,9 @@ const NewCourse: React.FC = () => {
         let response = await fetch('http://localhost:5000/api/v1/courses/',
             {
                 method: "POST",
+                credentials:'include',
                 headers: {
                     'Content-Type': "Application/json",
-                    "Token": localStorage.getItem('token') || '',
-                    "Email": localStorage.getItem('email') || ''
                 },
                 body: JSON.stringify({ ...newCourse, ...{ requirements: requirements } })
 

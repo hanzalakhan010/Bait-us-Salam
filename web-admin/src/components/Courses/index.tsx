@@ -15,10 +15,7 @@ const Courses: React.FC = () => {
     const loadCourses = async () => {
         try {
             let response = await fetch('http://localhost:5000/api/v1/courses/', {
-                headers: {
-                    "Token": localStorage.getItem('token') || '',
-                    "Email": localStorage.getItem('email') || ''
-                }
+                credentials:'include'
             })
             let data = await response.json()
             if (response.ok) {

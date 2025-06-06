@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react"
-import { X } from "lucide-react"
+import { X, Pencil, SaveAllIcon } from "lucide-react"
 import { useParams } from "react-router-dom"
 import './styles.css'
 
 interface Course {
     course_name: string,
     course_description: string,
+    status: string
 
 }
 interface Requirements {
@@ -19,9 +20,13 @@ interface Requirements {
 
 const EditDetails: React.FC = () => {
     const { id } = useParams()
+    const [edit, setEdit] = useState(false)
+    const [updateStatus, setUpdateStatus] = useState('')
     const [course, setCourse] = useState<Course>({
         course_name: '',
         course_description: '',
+        status: ''
+
     })
     const [requirements, setRequirements] = useState<Requirements[]>([])
     const handleRequirementChange = (index: number, field: keyof Requirements, value: any) => {
@@ -42,33 +47,92 @@ const EditDetails: React.FC = () => {
         setRequirements(requirements.filter((_, i) => i !== index))
     }
     const loadCourse = async () => {
-        let response = await fetch(`http://localhost:5000/api/v1/courses/${id}`)
+        try {
+            let response = await fetch(`http://localhost:5000/api/v1/courses/${id}/details`, { credentials: 'include' })
+            let data = await response.json()
+            console.log(data.course)
+            setCourse(data.course)
+            setRequirements(data.course.requirements ? data.course.requirements : [])
+        }
+        catch {
+            alert('Error connecting to server')
+        }
+    }
+    const saveDetails = async () => {
+        let response = await fetch(`http://localhost:5000/api/v1/courses/${id}/details`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'Application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ ...course, requirements })
+        })
         let data = await response.json()
-        console.log(data.course)
-        setCourse(data.course)
-        setRequirements(data.course.requirements ? data.course.requirements : [])
+        if (response.status == 201) {
+            setUpdateStatus(data.message)
+        }
+
     }
     useEffect(() => {
         loadCourse()
     }, [])
     return (
-        <>
-            <h2>Course Name : <i><span>{course.course_name}</span></i></h2>
-            <p>Course Description : <i><span>{course.course_description}</span></i></p>
-            <div className="form-group">
-                <button
-                    className="actionBtn"
-                    onClick={() => {
-                        setRequirements([...requirements, {
-                            id: requirements.length + 1,
-                            label: '',
-                            required: true,
-                            type: 'text',
-                            description: '',
-                            field_key: ''
-                        }])
+        <div id='courseDetails'>
+            <div id='metadata'>
+                <div>
+                    <button onClick={() => {
+                        if (edit) {
+                            saveDetails()
+                        }
+                        setEdit(!edit)
+                    }}>
+                        {edit ? <SaveAllIcon /> : <Pencil />
+                        }
+                    </button>
+                    <p>{updateStatus}</p>
+                </div>
+                <h3>Course Name</h3>
+                <input disabled={!edit} value={course.course_name}
+                    onChange={(e) => {
+                        setCourse({ ...course, course_name: e.target.value })
+                    }} />
+                <h3>Course Status</h3>
+                <select disabled={!edit} value={course.status} onChange={(e) => {
+                    setCourse({ ...course, status: e.target.value })
+                }}>
+                    <option value='inactive'>Inactive</option>
+                    <option value='open_to_application'>Open to application</option>
+                    <option value='close_to_application'>Close to application</option>
+                    <option value='running'>Running</option>
+                    <option value='finished'>Finished</option>
+                    <option value='archived'>Archived</option>
+                </select>
+                <h3>Course Description</h3>
+                <textarea
+                    onChange={(e) => {
+                        setCourse({ ...course, course_description: e.target.value })
                     }}
-                >Add requirement</button>
+                    disabled={!edit}
+                    cols={60} value={course.course_description} />
+
+            </div>
+            {/* <div> */}
+            {requirements.length == 0 ? 'No reqirements' : ""}
+            <button
+                disabled={!edit}
+                className="actionBtn"
+                onClick={() => {
+                    setRequirements([...requirements, {
+                        id: requirements.length + 1,
+                        label: '',
+                        required: true,
+                        type: 'file',
+                        description: '',
+                        field_key: ''
+                    }])
+                }}
+            >+ Add requirement</button>
+            <div id='requirements'>
 
                 {requirements?.map((req, index) => (
                     <div key={index}>
@@ -76,6 +140,7 @@ const EditDetails: React.FC = () => {
                         <div className='form-group'>
                             <label>Label</label>
                             <input placeholder='Label'
+                                disabled={!edit}
                                 value={req.label}
                                 onChange={(e) => handleRequirementChange(index, 'label', e.target.value)}
                             />
@@ -83,6 +148,7 @@ const EditDetails: React.FC = () => {
                         <div className='form-group'>
                             <label>Type</label>
                             <select
+                                disabled={!edit}
                                 onChange={(e) => handleRequirementChange(index, 'type', e.target.value as "upload" | "raw")}
                             >
                                 <option value="file">File Upload</option>
@@ -102,6 +168,7 @@ const EditDetails: React.FC = () => {
                         <div className='form-group'>
                             <label>Description</label>
                             <input placeholder='description'
+                                disabled={!edit}
                                 value={req.description}
                                 onChange={(e) => handleRequirementChange(index, 'description', e.target.value)}
                             />
@@ -109,6 +176,7 @@ const EditDetails: React.FC = () => {
                         <div className='form-group'>
                             <label>Required
                                 <input type='checkbox'
+                                    disabled={!edit}
                                     checked={req.required}
                                     onChange={(e) => handleRequirementChange(index, 'required', e.target.checked)}
                                 />
@@ -116,6 +184,7 @@ const EditDetails: React.FC = () => {
                         </div>
                         <div className='form-group'>
                             <button
+                                disabled={!edit}
                                 className="actionBtn"
                                 onClick={() => removeRequirement(index)}><X /></button>
                         </div>
@@ -123,7 +192,8 @@ const EditDetails: React.FC = () => {
                     </div>
                 ))}
             </div>
-        </>
+        </div>
+        // </div>
     )
 }
 

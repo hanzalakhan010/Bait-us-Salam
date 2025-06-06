@@ -38,7 +38,7 @@ const AddSection: React.FC<AddSectionProp> = ({ setAddSection }) => {
     //     formData.course_id = parseInt(id)
     // }
     const loadInstructors = async () => {
-        let response = await fetch('http://localhost:5000/api/v1/instructors')
+        let response = await fetch('http://localhost:5000/api/v1/instructors', { credentials: 'include' })
         let data = await response.json()
         setInstructors(data.instructors)
 
@@ -50,6 +50,7 @@ const AddSection: React.FC<AddSectionProp> = ({ setAddSection }) => {
         let response = await fetch(`http://localhost:5000/api/v1/courses/${id}/sections`,
             {
                 method: "POST",
+                credentials: 'include',
                 headers: {
                     'Content-Type': "Application/json"
 
@@ -88,7 +89,7 @@ const AddSection: React.FC<AddSectionProp> = ({ setAddSection }) => {
             <form id='addSection' onSubmit={addSection}>
                 <h4>Section Title</h4>
                 <input placeholder='Section title' name='section_title'
-                required
+                    required
                     value={formData.section_title}
                     onChange={(e) => setFormData({ ...formData, section_title: e.target.value })}
                 />
