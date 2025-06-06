@@ -4,20 +4,30 @@ interface Application {
     id: number,
     submitted_by: string,
     course_name: string,
-    created_at: string,
-    exam_status: string,
-    interview_status: string,
+    created_at: Date,
+    exam_status: Status[],
+    interview_status: Status[],
     status: string,
 }
 
+interface Status {
+    at: Date,
+    by: string,
+    status: string
+}
 const Applicaions: React.FC = () => {
     const [applications, setApplications] = useState<Application[]>([])
     const loadApplications = async () => {
-        let response = await fetch(`http://localhost:5000/api/v1/applications/`,
-            // 
-        )
-        let data = await response.json()
-        setApplications(data.applications)
+        try {
+            let response = await fetch(`http://localhost:5000/api/v1/applications/`,
+                { credentials: "include" }
+            )
+            let data = await response.json()
+            setApplications(data.applications)
+        }
+        catch {
+            alert('Error connecting to server')
+        }
     }
     useEffect(() => {
         loadApplications()
@@ -41,11 +51,12 @@ const Applicaions: React.FC = () => {
                 </thead>
                 <tbody id="body">
                     {applications.map((application) => (
-                        <tr>
+                        <tr key={application.id}>
                             <td>{application.course_name}</td>
-                            <td >{new Date(application.created_at).toLocaleString().split(',')[0]}</td>
-                            <td>{application.exam_status}</td>
-                            <td>{application.interview_status}</td>
+                            <td >{new Date(application?.created_at).toLocaleString().split(',')[0]}</td>
+                            <td>{application.exam_status[application.exam_status.length - 1].status}</td>
+                            <td>{application.interview_status[application.interview_status.length - 1].status}</td>
+                            {/* <td>{application.interview_status}</td> */}
                             <td>{application.status}</td>
                             <td>
                                 <Link to={`/applications/${application.id}`}>Review</Link>

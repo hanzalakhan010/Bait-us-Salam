@@ -1,14 +1,40 @@
-#ApplicationView{
+#ApplicationView {
     display: flex;
     flex-direction: column;
+    grid-template-columns: 1fr 1fr;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    width: 90%;
     margin: 10px auto;
 }
-#ApplicationView form{
-    width: 40%;
+
+#ApplicationView form {
+    /* width: 100%;
     border: .3px solid gray;
     padding: 10px;
-    box-sizing: border-box;
+    box-sizing: border-box; */
+}
+
+#ApplicationView section,
+#ApplicationView form {
+    width: 90%;
+    padding: 10px;
+    border: .1px solid gray;
+    margin: 2px;
+}
+
+#files {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: 10px;
+}
+
+#files img {
+    width: 200px;
+}
+
+section textarea {
+    font-size: larger;
+    resize: vertical;
+    max-width: 100%;
 }
