@@ -18,3 +18,9 @@ def ApplciationManagement():
 def ApplicationById(application_id):
     if request.method == "GET":
         return applicationById(application_id=application_id)
+
+
+@application_blueprint.route("/<int:application_id>/comment", methods=["POST"])
+@AuthRequired(min_level=2)
+def ApplicationComment(application_id):
+    return ...

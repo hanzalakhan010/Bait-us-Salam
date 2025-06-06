@@ -10,3 +10,4 @@ def register_routes(app):
     app.register_blueprint(instructors_blueprint, url_prefix="/api/v1/instructors/")
     app.register_blueprint(application_blueprint, url_prefix="/api/v1/applications")
     app.register_blueprint(auth_blueprint, url_prefix="/api/v1/auth")
+    # app.register_blueprint(auth_blueprint, url_prefix="/upload")

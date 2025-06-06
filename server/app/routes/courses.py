@@ -3,9 +3,10 @@ from app.services.auth import AuthRequired
 from app.services.courses import (
     getAllCourses,
     addCourse,
-    getCourseById,
+    getCourseDetailsById,
     getSectionsByCourse,
     addSection,
+    updateCourseDetails,
 )
 
 courses_blueprint = Blueprint("courses", __name__)
@@ -20,11 +21,14 @@ def CourseManagment():
         return addCourse(courseDetails=request.json)
 
 
-@courses_blueprint.route("/<int:course_id>", methods=["GET"])
-@AuthRequired(min_level=3)
-def CourseManagmentById(course_id):
+@courses_blueprint.route("/<int:course_id>/details", methods=["GET", "PATCH"])
+@AuthRequired(method_levels={"GET": 4, "PATCH": 1})
+def CourseDetailsManagmentById(course_id):
     if request.method == "GET":
-        return getCourseById(course_id=course_id)
+        return getCourseDetailsById(course_id=course_id)
+    elif request.method == "PATCH":
+        courseDetails = request.json
+        return updateCourseDetails(course_id=course_id, courseDetails=courseDetails)
 
 
 @courses_blueprint.route("/<int:course_id>/sections", methods=["GET", "POST"])
