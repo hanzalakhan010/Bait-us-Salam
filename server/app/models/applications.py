@@ -10,7 +10,7 @@ def initialStatus():
         {
             "status": "Pending",
             "by": "system",
-            "at": datetime.datetime.utcnow().isoformat(),
+            "at": datetime.utcnow().isoformat(),
         }
     ]
 
@@ -23,10 +23,11 @@ class Applications(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False)
     exam_status = db.Column(JSONB, default=initialStatus)
     interview_status = db.Column(JSONB, default=initialStatus)
-    status = db.Column(JSONB)
-    comments = db.Column(db.Text, nullable=True)
+    status = db.Column(JSONB, default=initialStatus)
+    comments = db.Column(JSONB)
     created_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
     requirements = db.Column(db.JSON)
+    is_editable = db.Column(db.Boolean, default=False)
     student = db.relationship("Students", backref="applications")
     applicant = db.relationship("Applicants", backref="application")
     course = db.relationship("Courses", backref="applications")
@@ -51,6 +52,9 @@ class Applications(db.Model):
             "interview_status": self.interview_status,
             "status": self.status,
             "requirements": self.requirements,
+            "submitted_by": self.submitted_by_type,
+            "comments": self.comments,
+            "is_editable": self.is_editable,
         }
         if self.applicant_id:
             base["applicant_id"] = self.applicant_id

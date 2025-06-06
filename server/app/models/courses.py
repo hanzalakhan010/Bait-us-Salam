@@ -7,8 +7,8 @@ class Courses(db.Model):
     __tablename__ = "courses"
     id = db.Column(db.Integer, primary_key=True)
     course_name = db.Column(db.String(20))
-    course_description = db.Column(db.String(100))
-    status = db.Column(db.String(20))
+    course_description = db.Column(db.Text)
+    status = db.Column(db.String(20), default="inactive")
     requirements = db.Column(db.JSON)
     # course_sections = db.relationship("CourseSection", backref="course", lazy="joined")
 
@@ -32,13 +32,9 @@ class Courses(db.Model):
             "course_description": self.course_description,
             "course_name": self.course_name,
             "requirements": self.requirements,
+            "status": self.status,
         }
-        if role == "admin":
-            base.update(
-                {
-                    "status": self.status,
-                }
-            )
+
         return base
 
     def total_enrollments(self):
