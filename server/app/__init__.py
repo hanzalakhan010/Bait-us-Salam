@@ -1,9 +1,11 @@
-from flask import Flask
+from flask import Flask, abort, send_from_directory
 from app.extensions import cors
 from .models import db
 from app.routes import register_routes
 from flask_migrate import Migrate
 from app.logging_config import setup_logging
+from app.services.auth import AuthRequired
+import os
 
 UPLOAD_FOLDER = "./uploads/"
 migrate = Migrate()
@@ -15,8 +17,23 @@ def create_app(config_class="app.config.Config"):
     setup_logging()
     db.init_app(app)
     migrate.init_app(app, db)
-    cors.init_app(app, resources={r"/*": {"origins": "*"}})
+    cors.init_app(
+        app,
+        supports_credentials=True,
+        origins=["http://localhost:5173"],
+    )
 
     register_routes(app)
+
+    @app.route("/uploads/<folder_id>/<filename>")
+    @AuthRequired(min_level=1)
+    def serveUploadFolder(folder_id, filename):
+        directory = os.path.abspath(os.path.join(UPLOAD_FOLDER, folder_id))
+        full_path = os.path.join(directory, filename)
+        if not os.path.isfile(full_path):
+            print("debug")
+            abort(404)
+        print(directory, filename)
+        return send_from_directory(directory, filename)
 
     return app
