@@ -2,10 +2,12 @@ import logging
 import os
 from json import dumps
 
-from flask import jsonify
+import bleach
+from flask import jsonify, session
 from sqlalchemy.exc import IntegrityError
 from werkzeug.utils import secure_filename
 
+from datetime import datetime
 from app.models import db
 from app.models.applications import Applications
 from app.services.students import studentDocsFolder
@@ -112,3 +114,21 @@ def applicationById(application_id):
         )
     else:
         return jsonify({"error": "Application not found"})
+
+
+def saveApplicationComment(application_id, comment):
+    application = Applications.query.get_or_404(application_id)
+    author = session.get("urer", {}).get("role", "")
+    if application and author:
+        comments = application.comments or []
+        comments.append(
+            {
+                "text": bleach.clean(comment, tags=[], strip=True),
+                "author": author,
+                "timestamp": datetime.utcnow().isoformat(),
+            }
+        )
+        application.comments = comments
+        db.session.commit()
+        return jsonify({"message": "Commented"}), 201
+    return jsonify({"error": "Missing Information"}), 401

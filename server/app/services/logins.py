@@ -2,7 +2,7 @@ from app.models.logins import Logins
 from json import loads
 from uuid import uuid4
 import hashlib
-from flask import jsonify, make_response
+from flask import jsonify, make_response, session
 from app.models import db
 import logging
 
@@ -39,12 +39,13 @@ def adminLogin(email, password):
                 token,  # Token value
                 max_age=60 * 60,  # 1 hour in seconds
                 httponly=True,  # Prevent client JS access
-                secure=True,  # Only send over HTTPS (set False for local dev)
+                secure=False,  # Only send over HTTPS (set False for local dev)
                 samesite="Lax",
             )
             login = Logins(role="admin", email=email, token=token, role_level=1)
             db.session.add(login)
             db.session.commit()
+            session["user"] = {"role": login.role, "role_level": login.role_level}
             logger.info("Admin login")
             return response, 201
         logger.warn("Invalid admin login attempt")
