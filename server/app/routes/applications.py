@@ -1,5 +1,9 @@
 from flask import Blueprint, request
-from app.services.applications import allApplications, applicationById
+from app.services.applications import (
+    allApplications,
+    applicationById,
+    saveApplicationComment,
+)
 from app.services.auth import AuthRequired
 
 application_blueprint = Blueprint("applications", __name__)
@@ -23,4 +27,6 @@ def ApplicationById(application_id):
 @application_blueprint.route("/<int:application_id>/comment", methods=["POST"])
 @AuthRequired(min_level=2)
 def ApplicationComment(application_id):
-    return ...
+    return saveApplicationComment(
+        application_id=application_id, comment=request.json.get("comment", "")
+    )
