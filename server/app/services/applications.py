@@ -1,7 +1,7 @@
 import logging
 import os
 from json import dumps
-
+from uuid import uuid4
 import bleach
 from flask import jsonify, session
 from sqlalchemy.exc import IntegrityError
@@ -51,7 +51,7 @@ def addApplication(
                 os.makedirs(os.path.join(UPLOAD_FOLDER, docs_folder), exist_ok=True)
                 for file_key, file_obj in files.items():
                     if file_obj:
-                        filename = secure_filename(file_obj.filename)
+                        filename = str(uuid4()) + secure_filename(file_obj.filename)
                         filepath = os.path.join(UPLOAD_FOLDER, docs_folder, filename)
                         file_obj.save(filepath)
                         __files.append((file_key, filename))
@@ -67,7 +67,7 @@ def addApplication(
 
         # Add requirements and submitter details
         newApplication.requirements = dumps(
-            {"form": requirementForm.to_dict(), "files": __files}
+            {"form": list(requirementForm.to_dict().items()), "files": __files}
         )
         if student_id:
             newApplication.student_id = int(student_id)
@@ -118,17 +118,90 @@ def applicationById(application_id):
 
 def saveApplicationComment(application_id, comment):
     application = Applications.query.get_or_404(application_id)
-    author = session.get("urer", {}).get("role", "")
+    author = session.get("user", {}).get("role", "")
     if application and author:
         comments = application.comments or []
-        comments.append(
-            {
-                "text": bleach.clean(comment, tags=[], strip=True),
-                "author": author,
-                "timestamp": datetime.utcnow().isoformat(),
-            }
-        )
+        comment = {
+            "text": bleach.clean(comment, tags=[], strip=True),
+            "author": author,
+            "timestamp": datetime.utcnow().isoformat(timespec="milliseconds") + "Z",
+        }
+        comments.append(comment)
         application.comments = comments
         db.session.commit()
-        return jsonify({"message": "Commented"}), 201
+        return jsonify({"message": "Commented", "comment": comment}), 201
     return jsonify({"error": "Missing Information"}), 401
+
+
+validTransitions = {
+    "Application": {
+        "Pending": ["Under Review", "Editable"],
+        "Under Review": ["Fulfilled", "Rejected", "Editable"],
+        "Editable": ["Under Review"],
+        "Fulfilled": [],
+        "Rejected": [],
+    },
+    "Exam": {
+        "Pending": ["Scheduled"],
+        "Scheduled": ["Attempted", "Missed"],
+        "Attempted": ["Grading"],
+        "Grading": ["Graded"],
+        "Graded": ["Result Published"],
+        "Result Published": [],
+    },
+    "Interview": {
+        "Pending": ["Scheduled"],
+        "Scheduled": ["Attempted", "Missed"],
+        "Attempted": ["Result Published"],
+        "Missed": ["Result Published"],
+        "Result Published": [],
+    },
+}
+
+
+def checkValidTransition(label, oldStatus, newStatus):
+    return newStatus in validTransitions.get(label, {}).get(oldStatus, [])
+
+
+def statusCook(changeBy, newStatus):
+    return {
+        "status": newStatus,
+        "by": changeBy,
+        "at": datetime.utcnow().isoformat(),
+    }
+
+
+def applicationStatus(application_id, label, newStatus, changeBy):
+    application = Applications.query.get_or_404(application_id)
+    if not application:
+        return jsonify({"error": "application not found"})
+    if label == "Application":
+        oldStatus = application.status[-1]["status"]
+        print(oldStatus)
+        if checkValidTransition(label=label, oldStatus=oldStatus, newStatus=newStatus):
+            status = application.status
+            status.append(statusCook(changeBy=changeBy, newStatus=newStatus))
+            application.status = status
+            db.session.commit()
+            return jsonify({"message": "Status updated"}), 201
+        return jsonify({"error": "Can't transition to new status"}), 401
+
+    elif label == "Exam":
+        oldStatus = application.exam_status[-1]["status"]
+        if checkValidTransition(label=label, oldStatus=oldStatus, newStatus=newStatus):
+            status = application.exam_status
+            status.append(statusCook(changeBy=changeBy, newStatus=newStatus))
+            application.exam_status = status
+            db.session.commit()
+            return jsonify({"message": "Status updated"}), 201
+        return jsonify({"error": "Can't transition to new status"}), 401
+
+    elif label == "Interview":
+        oldStatus = application.interview_status[-1]["status"]
+        if checkValidTransition(label=label, oldStatus=oldStatus, newStatus=newStatus):
+            status = application.interview_status
+            status.append(statusCook(changeBy=changeBy, newStatus=newStatus))
+            application.interview_status = status
+            db.session.commit()
+            return jsonify({"message": "Status updated"}), 201
+        return jsonify({"error": "Can't transition to new status"}), 401

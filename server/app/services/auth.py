@@ -47,5 +47,6 @@ def checkAuth(token):
     if token:
         login = Logins.query.filter_by(token=token, is_active=True).first()
         if login.expires_at > datetime.utcnow():
-            return jsonify({"message": "Session expired"}), 200
-    return jsonify({"message": "Auth unsucessfull"}), 403
+            return jsonify({"message": "auth successfull"}), 200
+        return jsonify({"error": "Session expired"}), 403
+    return jsonify({"error": "Auth unsucessfull"}), 403
