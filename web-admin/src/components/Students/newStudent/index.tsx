@@ -34,7 +34,7 @@ const NewStudent: React.FC = () => {
         }
         else {
             let response = await fetch('http://localhost:5000/api/v1/students/',
-                {
+                {   credentials:'include',
                     method: "POST",
                     headers: {
                         'Content-Type': "Application/json"

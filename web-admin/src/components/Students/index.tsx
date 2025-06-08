@@ -16,10 +16,7 @@ const Students: React.FC = () => {
   const loadStudents = async () => {
     try {
       let response = await fetch('http://localhost:5000/api/v1/students/', {
-        headers: {
-          "Token": localStorage.getItem('token') || '',
-          "Email": localStorage.getItem('email') || ''
-        }
+        credentials:'include'
       })
       let data = await response.json()
       setStudents(data.students)

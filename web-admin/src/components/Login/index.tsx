@@ -16,16 +16,13 @@ const Login: React.FC<LoginProps> = ({ setLogin }) => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'Application/json',
-                
-
                 },
+                credentials: 'include',
                 body: JSON.stringify({ email, password, role: 'admin' })
             })
             let data = await response.json()
             if (response.status == 201) {
                 setLogin(true)
-                localStorage.setItem('token', data.token)
-                localStorage.setItem('email', email)
             }
             else {
                 setError(data.error)
@@ -41,9 +38,13 @@ const Login: React.FC<LoginProps> = ({ setLogin }) => {
                 <>
                     <h1>Admin Login</h1>
                     <label>Email</label>
-                    <input placeholder='Email' type='email' value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <input placeholder='Email' type='email' value={email} onChange={(e) => setEmail(e.target.value)}
+                    />
                     <label>Password</label>
-                    <input placeholder='Password' type='password' value={password} onChange={(e) => setpassword(e.target.value)} />
+                    <input placeholder='Password' type='password' value={password} onChange={(e) => setpassword(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key == 'Enter') { login() }
+                        }} />
                     <p>{error}</p>
                     <button onClick={login}>Login</button>
                 </>

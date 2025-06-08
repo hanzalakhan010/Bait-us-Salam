@@ -1,12 +1,12 @@
 #loginDiv{
-    width: 60%;
+    width: 50%;
     margin: 10px auto;
     display: flex;
     flex-direction: column;
     row-gap: 10px;
 }
 #loginDiv input,#loginDiv button{
-    font-size: larger;
+    font-size: xx-large;
 }
 @media screen  and (max-width:800px){
     div{

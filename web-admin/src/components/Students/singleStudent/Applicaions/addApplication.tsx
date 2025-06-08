@@ -28,12 +28,9 @@ const AddApplication: React.FC = () => {
 
     const loadSelectedCourse = async (course_id: number) => {
         setRequirements([])
-        let response = await fetch(`http://localhost:5000/api/v1/courses/${course_id}`,
+        let response = await fetch(`http://localhost:5000/api/v1/courses/${course_id}/details`,
             {
-                headers: {
-                    "Token": localStorage.getItem('token') || '',
-                    "Email": localStorage.getItem('email') || ''
-                }
+                credentials: 'include'
             }
         )
         let data = await response.json()

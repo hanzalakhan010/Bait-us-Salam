@@ -22,19 +22,18 @@ function App() {
   const checkAuth = async () => {
     let email = localStorage.getItem('email')
     let token = localStorage.getItem('token')
-    console.log(email, token)
+    console.log(email)
     if (email && token) {
       let response = await fetch('http://localhost:5000/api/v1/auth/auth', {
         method: "POST",
-        headers: {
-          'Content-Type': "application/json"
-        },
-        body: JSON.stringify({
-          email, token
-        })
+        credentials: 'include',
+
       })
       if (response.status == 200) {
         setLogin(true)
+      }
+      else {
+        setLogin(false)
       }
     }
   }
