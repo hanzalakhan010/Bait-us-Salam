@@ -1,8 +1,9 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify, session
 from app.services.applications import (
     allApplications,
     applicationById,
     saveApplicationComment,
+    applicationStatus,
 )
 from app.services.auth import AuthRequired
 
@@ -29,4 +30,20 @@ def ApplicationById(application_id):
 def ApplicationComment(application_id):
     return saveApplicationComment(
         application_id=application_id, comment=request.json.get("comment", "")
+    )
+
+
+@application_blueprint.route("/<int:application_id>/status/<string:label>", methods=["POST"])
+@AuthRequired(min_level=2)
+def ApplicatioStatusManagement(application_id,label):
+    # label = request.json.get("label", "")
+    changeBy = session.get("user", {}).get("role", "")
+    newStatus = request.json.get("status", "")
+    if not label:
+        return jsonify({"error": "label is not specified"}), 401
+    return applicationStatus(
+        application_id=application_id,
+        label=label,
+        newStatus=newStatus,
+        changeBy=changeBy,
     )
