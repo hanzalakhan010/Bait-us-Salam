@@ -8,12 +8,6 @@
     margin: 10px auto;
 }
 
-#ApplicationView form {
-    /* width: 100%;
-    border: .3px solid gray;
-    padding: 10px;
-    box-sizing: border-box; */
-}
 
 #ApplicationView section,
 #ApplicationView form {
@@ -21,6 +15,26 @@
     padding: 10px;
     border: .1px solid gray;
     margin: 2px;
+}
+
+.comments {
+    border: .2px solid gray;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    padding: 5px;
+}
+
+.comments .author,
+.comments .timestamp {
+    /* margin-left: 10px; */
+    margin-right: 10px;
+}
+
+.comments .text {
+    margin: 10px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    width: 200px;
 }
 
 #files {
@@ -37,4 +51,75 @@ section textarea {
     font-size: larger;
     resize: vertical;
     max-width: 100%;
+}
+
+#statusDiv {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    row-gap: 10px;
+    column-gap: 10px;
+    align-items: center;
+    justify-items: center;
+    width: 100%;
+}
+
+#statusDiv>div {
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}
+
+#statusDiv select,
+
+#statusDiv h4 {
+    font-size: large;
+}
+
+#statusDiv button {
+    font-size: medium;
+}
+
+#statusDiv button {
+    padding: 5px;
+    height: auto;
+}
+
+
+
+
+@media screen and (max-width: 768px) {
+    #ApplicationView {
+        width: 100%;
+        margin: 5px auto;
+    }
+
+    #ApplicationView section,
+    #ApplicationView form {
+        width: 100%;
+        padding: 5px;
+    }
+
+    .comments .text {
+        width: 100%;
+        margin: 5px;
+    }
+
+    #files {
+        grid-template-columns: 1fr;
+        column-gap: 5px;
+    }
+
+    #files img {
+        width: 100%;
+    }
+
+    #statusDiv {
+        grid-template-columns: 1fr;
+        row-gap: 5px;
+        column-gap: 5px;
+        align-items: center;
+        justify-content: center;
+    }
+
 }

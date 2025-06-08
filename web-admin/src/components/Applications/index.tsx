@@ -7,7 +7,7 @@ interface Application {
     created_at: Date,
     exam_status: Status[],
     interview_status: Status[],
-    status: string,
+    status: Status[],
 }
 
 interface Status {
@@ -56,8 +56,8 @@ const Applicaions: React.FC = () => {
                             <td >{new Date(application?.created_at).toLocaleString().split(',')[0]}</td>
                             <td>{application.exam_status[application.exam_status.length - 1].status}</td>
                             <td>{application.interview_status[application.interview_status.length - 1].status}</td>
-                            {/* <td>{application.interview_status}</td> */}
-                            <td>{application.status}</td>
+                            <td>{application.status[application.status.length - 1].status}</td>
+                            {/* <td>{application.status}</td> */}
                             <td>
                                 <Link to={`/applications/${application.id}`}>Review</Link>
                             </td>

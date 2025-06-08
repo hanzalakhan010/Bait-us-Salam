@@ -2,24 +2,30 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import './styles.css'
+import StatusControl from './StatusControl';
 interface Submitter {
     docs_folder: string,
     email: string,
     id: number,
     name: string
 }
-interface Requirement {
-    [key: string]: string;
-}
+// interface Requirement {
+//     [key: string]: string;
+// }
 interface Requirements {
     files: string[][],
-    form: Requirement[]
+    form: string[][]
 
 }
 interface Status {
     at: Date,
     by: string,
     status: string
+}
+interface Comment {
+    text: string,
+    author: string,
+    timestamp: Date,
 }
 interface Application {
     id: number,
@@ -33,12 +39,15 @@ interface Application {
     submitted_by: string,
     submitter: Submitter,
     requirements: Requirements
+    comments: Comment[]
 }
 const SingleApplication: React.FC = () => {
     const { id } = useParams();
     const [application, setApplication] = useState<Application>()
     const [examStatus, setExamStatus] = useState('')
     const [interviewStatus, setInterviewStatus] = useState('')
+    const [applicationStatus, setApplicationStatus] = useState('')
+    const [comment, setComment] = useState('')
     const loadApplication = async () => {
         try {
             let response = await fetch(`http://localhost:5000/api/v1/applications/${id}`, {
@@ -49,19 +58,44 @@ const SingleApplication: React.FC = () => {
                 if (data.application.requirements) {
                     data.application.requirements = JSON.parse(data.application.requirements)
                 }
+                if (!data.application?.comments) {
+                    data.application.comments = []
+                }
                 setApplication(data.application)
                 setExamStatus(data.application?.exam_status[data.application?.exam_status.length - 1].status)
                 setInterviewStatus(data.application?.interview_status[data.application?.interview_status.length - 1].status)
+                setApplicationStatus(data.application?.status[data.application?.status.length - 1].status)
             }
         }
         catch {
             alert('Error connecting to server')
         }
     }
+    const addComment = async () => {
+        let response = await fetch(`http://localhost:5000/api/v1/applications/${id}/comment`,
+            {
+                method: 'POST',
+                credentials: 'include',
+                body: JSON.stringify({ comment }),
+                headers: { 'Content-Type': 'Application/json' }
+            }
+        )
+        let data = await response.json()
+        if (response.status == 201) {
+            let comments = application?.comments
+            comments?.push(data.comment)
+            setComment('')
+
+
+        }
+
+    }
+
     useEffect(() => {
         loadApplication()
         console.log(application?.requirements.files)
     }, [])
+
     return (
         <div id='ApplicationView'>
             <h1>Application for:  `{application?.course_name}` </h1>
@@ -72,11 +106,17 @@ const SingleApplication: React.FC = () => {
                 <p><i>Date: </i>{application?.created_at ? new Date(application.created_at).toLocaleDateString() : 'N/A'}</p>
                 <p><i>Course:</i> {application?.course_name}</p>
             </section>
+            <section>
+                <h3>Requirement Form</h3>
+                {application?.requirements.form.map((req, index) => <div key={index}>
+                    <p><span style={{ display: 'inline-block' }}>{req[0]}:</span> {req[1]}</p>
+                </div>)}
+            </section>
             <section id='filesDiv'>
                 <h3>Files</h3>
                 <div id='files'>
                     {application?.requirements?.files.map((file, index) =>
-                        <div>
+                        <div key={index}>
                             <p>{file[0]}</p>
                             <img key={index} src={`http://localhost:5000/uploads/${application?.submitter.docs_folder}/${file[1]}`} />
                         </div>
@@ -84,48 +124,29 @@ const SingleApplication: React.FC = () => {
                     )}
                 </div>
             </section>
-            <form>
-                <>
-                    <div>
+            <section id='statusDiv'>
+                <StatusControl application_id={id} label='Application' currentStatus={applicationStatus} />
+                <StatusControl application_id={id} label='Exam' currentStatus={examStatus} />
+                <StatusControl application_id={id} label='Interview' currentStatus={interviewStatus} />
 
-                        <h4>Exam Status</h4>
-                        <select value={examStatus}
-                            onChange={(e) => { setExamStatus(e.target.value) }}
-                        >
-                            <option value='Pending'>Pending</option>
-                            <option value='Scheduled'>Scheduled</option>
-                            <option value='Attempted'>Attempted</option>
-                            <option value='Missed'>Missed</option>
-                            <option value='Grading'>Grading in Progress</option>
-                            <option value='Graded'>Graded</option>
-                            <option value='Result Published'>Result Published</option>
-                        </select>
-                        {examStatus == 'Scheduled' ? (<input type='date' />) : null}
-                    </div>
-                    <div>
-
-                        <h4>Interview Status</h4>
-                        <select value={interviewStatus}
-                            onChange={(e) => {
-                                setInterviewStatus(e.target.value)
-                            }}>
-                            <option value='Pending'>Pending</option>
-                            <option value='Scheduled'>Scheduled</option>
-                            <option value='Attempted'>Attempted</option>
-                            <option value='Missed'>Missed</option>
-                            <option value='Result Published'>Result Published</option>
-                        </select>
-                        {interviewStatus == 'Scheduled' ? (<input type='date' />) : null}
-                    </div>
-                </>
-            </form>
+            </section>
             <section>
                 <h4>Comments</h4>
-                <textarea cols={60}rows={5} />
-                <br />
-                <button>Save</button>
+                <div>
+                    <input value={comment} onChange={(e) => { setComment(e.target.value) }} />
+                    <button onClick={addComment}>Comment</button>
+                </div>
+
+                {application?.comments.map((comment, index) =>
+                    <div key={index} className='comments'>
+                        <span className='author'>By:<b>{comment.author}</b></span>
+
+                        <span className='timestamp'>At: <b>{new Date(comment.timestamp).toDateString()}</b></span>
+                        <br />
+                        <span className='text'><i>{comment.text}</i></span>
+                    </div>)}
             </section>
-        </div>
+        </div >
     );
 };
 
