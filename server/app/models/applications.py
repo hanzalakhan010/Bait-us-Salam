@@ -1,6 +1,7 @@
 from sqlalchemy import CheckConstraint
 from app.models import db
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.ext.hybrid import hybrid_property
 from datetime import datetime
 
@@ -21,10 +22,10 @@ class Applications(db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=True)
     applicant_id = db.Column(db.Integer, db.ForeignKey("applicants.id"), nullable=True)
     course_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False)
-    exam_status = db.Column(JSONB, default=initialStatus)
-    interview_status = db.Column(JSONB, default=initialStatus)
-    status = db.Column(JSONB, default=initialStatus)
-    comments = db.Column(JSONB)
+    exam_status = db.Column(MutableList.as_mutable(JSONB()), default=initialStatus)
+    interview_status = db.Column(MutableList.as_mutable(JSONB), default=initialStatus)
+    status = db.Column(MutableList.as_mutable(JSONB), default=initialStatus)
+    comments = db.Column(MutableList.as_mutable(JSONB), default=list)
     created_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
     requirements = db.Column(db.JSON)
     is_editable = db.Column(db.Boolean, default=False)
