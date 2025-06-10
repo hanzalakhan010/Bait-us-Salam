@@ -1,8 +1,8 @@
 import React, { useState } from "react"
-import './styles.css'
-import EditDetails from "./EditDetails"
-import CourseSections from "./CourseSections"
+import { default as CourseActions, default as CourseSections } from "./CourseSections"
 import CourseSessions from "./CourseSessions"
+import EditDetails from "./EditDetails"
+import './styles.css'
 
 const CourseView: React.FC = () => {
     const [tab, setTab] = useState('editDetails')
@@ -13,11 +13,13 @@ const CourseView: React.FC = () => {
                 <button onClick={() => { setTab('sections') }}>Sections</button>
                 <button onClick={() => { setTab('sessions') }}>Sessions</button>
                 <button onClick={() => { setTab('announcements') }}>Announcements</button>
+                <button onClick={() => { setTab('actions') }}>Actions</button>
             </div>
             <div id='courseTab'>
                 {tab == 'editDetails' ? <EditDetails /> : null}
                 {tab == 'sections' ? <CourseSections /> : null}
                 {tab == 'sessions' ? <CourseSessions /> : null}
+                {tab == 'actions' ? <CourseActions /> : null}
                 {/* {tab == 'sections' ? <CourseSections /> : null} */}
             </div>
         </div>

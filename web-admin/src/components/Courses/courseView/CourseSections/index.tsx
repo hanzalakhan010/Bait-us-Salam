@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-import AddSection from "./addSection"
-import './styles.css'
+import AddSection from "../addSection"
+import '../styles.css'
+import UnrosteredStudents from "./UnrosteredStudents"
 interface Section {
+    id: number,
     title: string,
     instructor_name: string,
     enrollment_count: number
@@ -19,8 +21,9 @@ const CourseSections: React.FC = () => {
     const [addSection, setAddSection] = useState(false)
     const [sections, setSection] = useState<Section[]>(
         [])
+
     const loadSections = async () => {
-        let response = await fetch(`http://localhost:5000/api/v1/courses/${id}/sections`,{credentials:"include"})
+        let response = await fetch(`http://localhost:5000/api/v1/courses/${id}/sections`, { credentials: "include" })
         let data = await response.json()
         console.log(data)
         setSection(data.sections)
@@ -45,6 +48,7 @@ const CourseSections: React.FC = () => {
                 id='addBtn'
                 onClick={() => { setAddSection(!addSection) }}
                 style={{ backgroundColor: addSection ? 'red' : '#007bff' }}>{addSection ? "Cancel" : "+ Add Section"}</button>
+            <UnrosteredStudents sections={sections} />
         </div>
 
         // </div>

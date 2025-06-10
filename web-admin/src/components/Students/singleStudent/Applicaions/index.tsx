@@ -2,14 +2,19 @@ import React, { useEffect, useState } from 'react'
 import { useParams, } from 'react-router-dom'
 import AddApplication from './addApplication'
 
+interface Status {
+    at: Date,
+    by: string,
+    status: string
+}
 interface Application {
     id: number,
     submitted_by: string,
     course_name: string,
     created_at: string,
-    exam_status: string,
-    interview_status: string,
-    status: string,
+    exam_status: Status,
+    interview_status: Status,
+    status: Status,
 }
 
 const Applicaions: React.FC = () => {
@@ -55,12 +60,12 @@ const Applicaions: React.FC = () => {
                             <tr>
                                 <td>{application.course_name}</td>
                                 <td >{new Date(application.created_at).toLocaleString().split(',')[0]}</td>
-                                <td>{application.exam_status}</td>
-                                <td>{application.interview_status}</td>
-                                <td>{application.status}</td>
-                                <td>
-                                    <button>Review</button>
-                                </td>
+                                <td>{application.exam_status.status}</td>
+                                <td>{application.interview_status.status}</td>
+                                <td>{application.status.status}</td>
+                                {application.status.status == 'Editable' ? (
+                                    <td><button>Review</button></td>
+                                ) : null}
                             </tr>
                         ))}
                     </tbody>

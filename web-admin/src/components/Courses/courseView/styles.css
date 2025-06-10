@@ -80,13 +80,16 @@
 #sections {
     display: flex;
     flex-direction: column;
+    width: 90%;
 }
 
 #sections #sectionsContainer {
 
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
 }
 
 #sections #section {
@@ -96,13 +99,13 @@
 }
 
 #sections #addBtn {
-    margin: 10px;
+    margin: 10px auto;
     font-size: larger;
     border: none;
     border-radius: 5px;
     color: white;
     padding: 5px;
-
+    width: 200px;
     &:hover {
         cursor: pointer;
     }
@@ -121,7 +124,7 @@
     color: white;
     border: none;
     padding: 10px;
-
+    /* width: 200px; */
     /* width: 90%; */
     /* align-self: flex-start; */
     &:hover {
@@ -136,7 +139,18 @@
 #sessions table {
     width: 80%;
 }
-
+#actionsDiv{
+    width: 80%;
+    margin: 10px auto;
+}
+#actionsDiv button{
+    padding: 3px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    &:hover{
+        cursor: pointer;
+    }
+}
 @media screen and (max-width: 1000px) {
     #courseNav {
         display: flex;

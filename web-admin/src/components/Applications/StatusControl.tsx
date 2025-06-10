@@ -34,18 +34,20 @@ const validTransitions: Record<string, Record<string, string[]>> = {
 
 
 const StatusControl: React.FC<StatusControlProp> = ({ application_id, label, currentStatus }) => {
-    const [status, setStatus] = useState<string>(currentStatus)
+    const [currentStatus_, setCurrentStatus_] = useState(currentStatus)
+    const [status, setStatus] = useState<string>(currentStatus_)
     const changeStatus = async () => {
         let response = await fetch(`http://localhost:5000/api/v1/applications/${application_id}/status/${label}`, {
-            method:'POST',
+            method: 'POST',
             credentials: 'include',
             headers: {
                 'Content-Type': 'Application/json'
             },
             body: JSON.stringify({ status })
         })
-        let data = await response.json()
-        console.log(data)
+        if (response.status == 201) {
+            setCurrentStatus_(status)
+        }
     }
     return (
         <div>
@@ -54,8 +56,8 @@ const StatusControl: React.FC<StatusControlProp> = ({ application_id, label, cur
                 onChange={(e) => {
                     setStatus(e.target.value)
                 }}>
-                <option value={currentStatus}>{currentStatus}</option>
-                {validTransitions[label]?.[currentStatus]?.map((status) => (
+                <option value={currentStatus_}>{currentStatus_}</option>
+                {validTransitions[label]?.[currentStatus_]?.map((status) => (
                     <option key={status} value={status}>{status}</option>
                 ))}
             </select>
