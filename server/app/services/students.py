@@ -128,7 +128,7 @@ def getApplicationByStudent(student_id):
 
     applications = Applications.query.filter_by(student_id=student_id)
     return jsonify(
-        {"applications": [application.to_dict() for application in applications]}
+        {"applications": [application.to_dict_short() for application in applications]}
     )
 
 

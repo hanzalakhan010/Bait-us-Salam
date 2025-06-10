@@ -11,6 +11,7 @@ from datetime import datetime
 from app.models import db
 from app.models.applications import Applications
 from app.services.students import studentDocsFolder
+from app.models.courses import CourseEnrollment
 
 logger = logging.getLogger(__name__)
 
@@ -171,14 +172,33 @@ def statusCook(changeBy, newStatus):
     }
 
 
+def assignCourse(application):
+    courseEnrollment = CourseEnrollment(
+        course_id=application.course_id, student_id=application.student_id
+    )
+    db.session.add(courseEnrollment)
+    db.session.commit()
+
+
+def handleApplicationStatusChange(application, newStatus):
+    if newStatus == "Fulfilled":
+        if application.applicant_id:
+            ...
+        assignCourse(application)
+    elif newStatus == "Editable":
+        application.is_editable = True
+    else:
+        application.is_editable = False
+
+
 def applicationStatus(application_id, label, newStatus, changeBy):
     application = Applications.query.get_or_404(application_id)
     if not application:
         return jsonify({"error": "application not found"})
     if label == "Application":
         oldStatus = application.status[-1]["status"]
-        print(oldStatus)
         if checkValidTransition(label=label, oldStatus=oldStatus, newStatus=newStatus):
+            handleApplicationStatusChange(application=application, newStatus=newStatus)
             status = application.status
             status.append(statusCook(changeBy=changeBy, newStatus=newStatus))
             application.status = status

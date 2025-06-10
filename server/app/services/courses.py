@@ -1,5 +1,6 @@
 from app.models import db
-from app.models.courses import Courses
+from app.models.courses import Courses, CourseEnrollment
+from app.models.students import Students
 from flask import jsonify, session
 import logging
 
@@ -93,3 +94,33 @@ def updateCourseDetails(course_id, courseDetails):
         db.session.commit()
         return jsonify({"message": "Course details updated"}), 201
     return jsonify({"error": "Course not found"}), 404
+
+
+def getUnrosteredStudents(course_id):
+    
+    students = (
+        db.session.query(
+            Students.id, Students.name, CourseEnrollment.date.label("enrollment_date")
+        )
+        .join(CourseEnrollment, Students.id == CourseEnrollment.student_id)
+        .filter(
+            CourseEnrollment.course_id == course_id,
+            CourseEnrollment.course_section_id == None,
+        )
+        .all()
+    )
+    return (
+        jsonify(
+            {
+                "students": [
+                    {
+                        "id": student.id,
+                        "name": student.name,
+                        "enrollment_date": student.enrollment_date,
+                    }
+                    for student in students
+                ]
+            }
+        ),
+        200,
+    )
