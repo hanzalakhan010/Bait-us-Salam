@@ -7,6 +7,7 @@ from app.services.courses import (
     getSectionsByCourse,
     addSection,
     updateCourseDetails,
+    getUnrosteredStudents,
 )
 
 courses_blueprint = Blueprint("courses", __name__)
@@ -40,3 +41,9 @@ def SectionManagementByCourse(course_id):
         return getSectionsByCourse(course_id=course_id)
     elif request.method == "POST":
         return addSection(course_id=course_id, sectionDetails=request.json)
+
+
+@courses_blueprint.route("/<int:course_id>/unrostered", methods=["GET"])
+@AuthRequired(min_level=1)
+def UnrosteredStudentManagementByCourse(course_id):
+    return getUnrosteredStudents(course_id=course_id)
