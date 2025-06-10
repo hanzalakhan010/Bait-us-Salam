@@ -68,9 +68,9 @@ class Applications(db.Model):
             "id": self.id,
             "course_name": self.course.course_name,
             "created_at": self.created_at,
-            "exam_status": self.exam_status,
-            "interview_status": self.interview_status,
-            "status": self.status,
+            "exam_status": self.exam_status[-1],
+            "interview_status": self.interview_status[-1],
+            "status": self.status[-1],
         }
         if self.applicant_id:
             base["applicant_id"] = self.applicant_id

@@ -1,6 +1,7 @@
 from sqlalchemy import func
 
 from app.models import db
+from datetime import datetime
 
 
 class Courses(db.Model):
@@ -128,6 +129,19 @@ class CourseEnrollment(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey("courses.id"))
     student_id = db.Column(db.Integer, db.ForeignKey("students.id"))
     course_section_id = db.Column(db.Integer, db.ForeignKey("course_sections.id"))
-    date = db.Column(db.Date)
+    date = db.Column(db.Date, default=datetime.utcnow)
     student = db.relationship("Students", backref="course_enrollments")
     course = db.relationship("Courses", backref="course_enrollments")
+    __table_args__ = (
+        db.UniqueConstraint(
+            "course_section_id", "student_id", name="unique_section_student"
+        ),
+    )
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "course_id": self.course_id,
+            "student_id": self.student_id,
+            "course_section_id": self.course_section_id,
+        }
