@@ -81,6 +81,9 @@ class CourseSection(db.Model):
             "enrollment_count": self.enrollements(),
         }
 
+    def to_dict_short(self):
+        return {"id": self.id, "title": self.title}
+
 
 class Announcements(db.Model):
     __tablename__ = "announcements"

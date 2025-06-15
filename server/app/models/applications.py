@@ -3,6 +3,7 @@ from app.models import db
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy import Index, text
 from datetime import datetime
 
 
@@ -38,6 +39,20 @@ class Applications(db.Model):
             "(student_id IS NOT NULL AND applicant_id IS NULL) OR (student_id IS NULL AND applicant_id IS NOT NULL)",
             name="check_one_applicant_type",
         ),
+        Index(
+            "uq_student_per_course",
+            "student_id",
+            "course_id",
+            unique=True,
+            postgresql_where=text("student_id IS NOT NULL"),
+        ),
+        Index(
+            "uq_applicant_per_course",
+            "applicant_id",
+            "course_id",
+            unique=True,
+            postgresql_where=text("applicant_id IS NOT NULL"),
+        ),
     )
 
     @hybrid_property
@@ -49,9 +64,6 @@ class Applications(db.Model):
             "id": self.id,
             "course_name": self.course.course_name,
             "created_at": self.created_at,
-            "exam_status": self.exam_status,
-            "interview_status": self.interview_status,
-            "status": self.status,
             "requirements": self.requirements,
             "submitted_by": self.submitted_by_type,
             "comments": self.comments,
