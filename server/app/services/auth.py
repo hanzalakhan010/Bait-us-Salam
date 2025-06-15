@@ -3,6 +3,8 @@ from flask import request, jsonify
 from app.models.logins import Logins
 from datetime import datetime
 
+import time
+
 
 def AuthRequired(min_level=None, method_levels=None):
     def decorator(f):
@@ -35,7 +37,6 @@ def AuthRequired(min_level=None, method_levels=None):
                             jsonify({"error": f"Insufficient Access rights"}),
                             403,
                         )
-
             return f(*args, **kwargs)
 
         return wrapper

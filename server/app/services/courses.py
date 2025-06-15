@@ -11,8 +11,8 @@ from app.models.courses import CourseSection
 logger = logging.getLogger(__name__)
 
 
-def getAllCourses():
-    courses = Courses.query.all()
+def getAllCourses(filters):
+    courses = Courses.query.filter_by(**filters)
     return (
         jsonify(
             {
@@ -70,8 +70,10 @@ def addSection(course_id: int, sectionDetails: dict):
     return jsonify({"message": "Section added Succesufully"}), 201
 
 
-def getSectionsByCourse(course_id):
+def getSectionsByCourse(course_id, size="large"):
     sections = CourseSection.query.filter_by(course_id=course_id)
+    if size == "short":
+        return jsonify({"sections": [section.to_dict_short() for section in sections]})
     return jsonify({"sections": [section.to_dict() for section in sections]})
 
 
@@ -97,7 +99,7 @@ def updateCourseDetails(course_id, courseDetails):
 
 
 def getUnrosteredStudents(course_id):
-    
+
     students = (
         db.session.query(
             Students.id, Students.name, CourseEnrollment.date.label("enrollment_date")

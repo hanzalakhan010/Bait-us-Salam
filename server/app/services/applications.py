@@ -5,7 +5,9 @@ from uuid import uuid4
 import bleach
 from flask import jsonify, session
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import and_
 from werkzeug.utils import secure_filename
+from sqlalchemy import text
 
 from datetime import datetime
 from app.models import db
@@ -13,11 +15,38 @@ from app.models.applications import Applications
 from app.services.students import studentDocsFolder
 from app.models.courses import CourseEnrollment
 
+from app.config import validTransitions
+
 logger = logging.getLogger(__name__)
 
 
+ALLOWED_FILTERS = {
+    "course_id": (Applications.course_id, int),
+    "student_id": (Applications.student_id, int),
+    "applicant_id": (Applications.applicant_id, int),
+    "submitted_by_type": (Applications.submitted_by_type, str),
+}
+
+
 def allApplications(filters: dict):
-    applications = Applications.query.filter_by(**filters)
+
+    status_filter = filters.pop("status", None)
+    query = Applications.query
+    if status_filter:
+        query = Applications.query.filter(
+            text(f"(status->-1->>'status') = :status")
+        ).params(status=status_filter)
+    filter_clauses = []
+    for key, value in filters.items():
+        if key in ALLOWED_FILTERS:
+            column, cast = ALLOWED_FILTERS[key]
+            try:
+                filter_clauses.append(column == cast(value))
+            except ValueError:
+                return jsonify({"error": "Bad request"}), 400
+    if filter_clauses:
+        query = query.filter(and_(*filter_clauses))
+    applications = query.all()
     return (
         jsonify(
             {
@@ -42,6 +71,7 @@ def addApplication(
             return jsonify({"error": "Course or Applicant can't be empty"}), 400
 
         # Create a new application instance
+
         newApplication = Applications(course_id=course_id)
         __files = []
 
@@ -134,32 +164,6 @@ def saveApplicationComment(application_id, comment):
     return jsonify({"error": "Missing Information"}), 401
 
 
-validTransitions = {
-    "Application": {
-        "Pending": ["Under Review", "Editable"],
-        "Under Review": ["Fulfilled", "Rejected", "Editable"],
-        "Editable": ["Under Review"],
-        "Fulfilled": [],
-        "Rejected": [],
-    },
-    "Exam": {
-        "Pending": ["Scheduled"],
-        "Scheduled": ["Attempted", "Missed"],
-        "Attempted": ["Grading"],
-        "Grading": ["Graded"],
-        "Graded": ["Result Published"],
-        "Result Published": [],
-    },
-    "Interview": {
-        "Pending": ["Scheduled"],
-        "Scheduled": ["Attempted", "Missed"],
-        "Attempted": ["Result Published"],
-        "Missed": ["Result Published"],
-        "Result Published": [],
-    },
-}
-
-
 def checkValidTransition(label, oldStatus, newStatus):
     return newStatus in validTransitions.get(label, {}).get(oldStatus, [])
 
@@ -225,3 +229,15 @@ def applicationStatus(application_id, label, newStatus, changeBy):
             db.session.commit()
             return jsonify({"message": "Status updated"}), 201
         return jsonify({"error": "Can't transition to new status"}), 401
+
+
+def getApplicationStatus(application_id, label):
+    application = Applications.query.get_or_404(application_id)
+    if application:
+        if label == "Exam":
+            return jsonify({"status": application.exam_status}), 200
+        elif label == "Interview":
+            return jsonify({"status": application.interview_status}), 200
+        elif label == "Application":
+            return jsonify({"status": application.status}), 200
+    return jsonify({"error": "Application not found"})
