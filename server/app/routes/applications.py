@@ -4,6 +4,7 @@ from app.services.applications import (
     applicationById,
     saveApplicationComment,
     applicationStatus,
+    getApplicationStatus,
 )
 from app.services.auth import AuthRequired
 
@@ -33,17 +34,21 @@ def ApplicationComment(application_id):
     )
 
 
-@application_blueprint.route("/<int:application_id>/status/<string:label>", methods=["POST"])
+@application_blueprint.route(
+    "/<int:application_id>/status/<string:label>", methods=["GET", "POST"]
+)
 @AuthRequired(min_level=2)
-def ApplicatioStatusManagement(application_id,label):
-    # label = request.json.get("label", "")
-    changeBy = session.get("user", {}).get("role", "")
-    newStatus = request.json.get("status", "")
-    if not label:
-        return jsonify({"error": "label is not specified"}), 401
-    return applicationStatus(
-        application_id=application_id,
-        label=label,
-        newStatus=newStatus,
-        changeBy=changeBy,
-    )
+def ApplicatioStatusManagement(application_id, label):
+    if request.method == "GET":
+        return getApplicationStatus(application_id=application_id, label=label)
+    elif request.method == "POST":
+        changeBy = session.get("user", {}).get("role", "")
+        newStatus = request.json.get("status", "")
+        if not label:
+            return jsonify({"error": "label is not specified"}), 401
+        return applicationStatus(
+            application_id=application_id,
+            label=label,
+            newStatus=newStatus,
+            changeBy=changeBy,
+        )

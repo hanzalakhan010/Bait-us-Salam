@@ -13,11 +13,12 @@ from app.services.courses import (
 courses_blueprint = Blueprint("courses", __name__)
 
 
-@AuthRequired(method_levels={"GET": 3, "POST": 1})
 @courses_blueprint.route("/", methods=["GET", "POST"])
+@AuthRequired(method_levels={"GET": 2, "POST": 1})
 def CourseManagment():
     if request.method == "GET":
-        return getAllCourses()
+        filters = request.args.to_dict()
+        return getAllCourses(filters=filters)
     elif request.method == "POST":
         return addCourse(courseDetails=request.json)
 
@@ -38,7 +39,9 @@ def SectionManagementByCourse(course_id):
     if not course_id:
         return jsonify({"error": "Course ID can't be null"})
     if request.method == "GET":
-        return getSectionsByCourse(course_id=course_id)
+        return getSectionsByCourse(
+            course_id=course_id, size=request.args.get("size", "large")
+        )
     elif request.method == "POST":
         return addSection(course_id=course_id, sectionDetails=request.json)
 
