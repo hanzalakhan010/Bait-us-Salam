@@ -1,51 +1,49 @@
+import { BookOpenText, CalendarClock, FileText, GraduationCap, LayoutDashboard, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { Toaster } from 'react-hot-toast';
+import { Link, Route, Routes } from 'react-router-dom';
 import './App.css';
-import { Routes, Route } from 'react-router-dom';
-import Dashboard from './components/Dashboard';
-import { BookOpenText, FileText, GraduationCap, LayoutDashboard, Users } from 'lucide-react'
-import Students from './components/Students';
-import { Link } from 'react-router-dom';
-import NewStudent from './components/Students/newStudent';
-import SingleStudent from './components/Students/singleStudent';
+import Applicaions from './components/Applications';
+import SingleApplication from './components/Applications/singleApplication';
 import Courses from './components/Courses';
-import NewCourse from './components/Courses/newCourse';
 import CourseView from './components/Courses/courseView';
+import NewCourse from './components/Courses/newCourse';
+import Dashboard from './components/Dashboard';
 import Instructors from './components/Instructors';
 import NewInstructor from './components/Instructors/newInstructor';
-import Applicaions from './components/Applications';
 import Login from './components/Login';
-import SingleApplication from './components/Applications/singleApplication';
+import Sessions from './components/Sessions';
+import AddSession from './components/Sessions/AddSession';
+import Students from './components/Students';
+import NewStudent from './components/Students/newStudent';
+import SingleStudent from './components/Students/singleStudent';
+import { FullscreenLoader } from './components/FullScreenLoader';
 
 function App() {
   const [tab, setTab] = useState('dashboard')
-  const [login, setLogin] = useState(false)
+  const [authState, setAuth] = useState<"loading" | "authenticated" | "unauthenticated">('loading')
   const checkAuth = async () => {
-    let email = localStorage.getItem('email')
-    let token = localStorage.getItem('token')
-    console.log(email)
-    if (email && token) {
-      let response = await fetch('http://localhost:5000/api/v1/auth/auth', {
-        method: "POST",
-        credentials: 'include',
+    let response = await fetch('http://localhost:5000/api/v1/auth/auth', {
+      method: "POST",
+      credentials: 'include',
 
-      })
-      if (response.status == 200) {
-        setLogin(true)
-      }
-      else {
-        setLogin(false)
-      }
+    })
+    if (response.status == 200) {
+      setAuth('authenticated')
+    }
+    else {
+      setAuth('unauthenticated')
     }
   }
   useEffect(() => {
     checkAuth()
-  })
+  }, [])
   return (
     <>
 
       <>
         {
-          login ? (<>
+          authState == 'authenticated' && (<>
             <nav>
               <div>
                 <Link to='/dasboard' onClick={() => setTab('dashboard')} className={`flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-colors ${tab == 'dashboard' ? 'active' : null}`}>
@@ -77,7 +75,12 @@ function App() {
                   <span>Applications</span>
                 </Link>
               </div>
-
+              <div>
+                <Link to='/sessions' onClick={() => setTab('sessions')} className={`flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-colors ${tab == 'sessions' ? 'active' : null} `}>
+                  <CalendarClock className="w-20 h-5" />
+                  <span>Sessions</span>
+                </Link>
+              </div>
             </nav>
             <Routes>
               <Route path="/dasboard" element={<Dashboard />} />
@@ -95,12 +98,25 @@ function App() {
               {/* For Applications */}
               <Route path="/applications" element={<Applicaions />} />
               <Route path='/applications/:id' element={<SingleApplication />} />
+              {/* For sessions */}
+              <Route path="/sessions" element={<Sessions />} />
+              <Route path="/sessionsActions/new" element={<AddSession />} />
+              <Route path='/sessions/:id' element={<SingleApplication />} />
             </Routes>
           </>
-          ) : (
-            <Login setLogin={setLogin} />
-          )
-        }
+          )}
+        {authState == 'unauthenticated' && <Login setAuth={setAuth} />}
+        {authState == 'loading' && <FullscreenLoader />}
+
+
+        <Toaster position="bottom-right" reverseOrder={false} toastOptions={{
+          style: {
+            borderRadius: '8px',
+            background: '#333',
+            color: '#fff',
+          },
+          duration: 4000,
+        }} />
       </>
     </>
   )

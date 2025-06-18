@@ -1,11 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { notifyError, notifySuccess } from '../../notifications';
+import { data } from 'react-router-dom';
 interface StatusControlProp {
     application_id: string | undefined;
     label: keyof typeof validTransitions;
     currentStatus: string;
 }
 
-
+interface Status {
+    at: Date,
+    by: string,
+    status: string
+}
 const validTransitions: Record<string, Record<string, string[]>> = {
     'Application': {
         "Pending": ["Under Review", "Editable"],
@@ -33,9 +39,22 @@ const validTransitions: Record<string, Record<string, string[]>> = {
 
 
 
-const StatusControl: React.FC<StatusControlProp> = ({ application_id, label, currentStatus }) => {
-    const [currentStatus_, setCurrentStatus_] = useState(currentStatus)
-    const [status, setStatus] = useState<string>(currentStatus_)
+const StatusControl: React.FC<StatusControlProp> = ({ application_id, label }) => {
+    const [status, setStatus] = useState<Status[]>()
+    const [currentStatus, setCurrentStatus] = useState('')
+    const loadStatus = async () => {
+        let response = await fetch(`http://localhost:5000/api/v1/applications/${application_id}/status/${label}`,
+            {
+                credentials: 'include'
+            }
+        )
+        let data = await response.json()
+        if (response.status == 200) {
+            setStatus(data.status)
+            setCurrentStatus(data.status[data.status.length - 1].status)
+        }
+        console.log(data)
+    }
     const changeStatus = async () => {
         let response = await fetch(`http://localhost:5000/api/v1/applications/${application_id}/status/${label}`, {
             method: 'POST',
@@ -43,21 +62,29 @@ const StatusControl: React.FC<StatusControlProp> = ({ application_id, label, cur
             headers: {
                 'Content-Type': 'Application/json'
             },
-            body: JSON.stringify({ status })
+            body: JSON.stringify({ 'status': currentStatus })
         })
+        let data = await response.json()
         if (response.status == 201) {
-            setCurrentStatus_(status)
+            notifySuccess(data.message)
+            loadStatus()
+        }
+        else {
+            notifyError(data.error)
         }
     }
+    useEffect(() => {
+        loadStatus()
+    }, [])
     return (
         <div>
             <h4>{label} Status</h4>
-            <select value={status}
+            <select value={currentStatus}
                 onChange={(e) => {
-                    setStatus(e.target.value)
+                    setCurrentStatus(e.target.value)
                 }}>
-                <option value={currentStatus_}>{currentStatus_}</option>
-                {validTransitions[label]?.[currentStatus_]?.map((status) => (
+                <option value={currentStatus}>{currentStatus}</option>
+                {status && validTransitions[label]?.[status[status.length - 1]?.status]?.map((status) => (
                     <option key={status} value={status}>{status}</option>
                 ))}
             </select>

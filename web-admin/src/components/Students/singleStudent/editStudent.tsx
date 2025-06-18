@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import { notifyError, notifySuccess } from "../../../notifications"
 
 interface Student {
     name: string,
@@ -26,20 +27,15 @@ const EditStudent: React.FC = () => {
 
     })
     const { id } = useParams();
-
     const navigate = useNavigate();
-    const [error, setError] = useState('')
-    const [message, setMessage] = useState('')
     const editStudent = async () => {
 
         let response = await fetch(`http://localhost:5000/api/v1/students/${id}/details/`,
             {
+                credentials: 'include',
                 method: "PATCH",
                 headers: {
                     'Content-Type': "Application/json",
-
-                    "Token": localStorage.getItem('token') || '',
-                    "Email": localStorage.getItem('email') || ''
                 },
                 body: JSON.stringify(student)
 
@@ -47,10 +43,10 @@ const EditStudent: React.FC = () => {
         )
         let data = await response.json()
         if (response.status == 200) {
-            setMessage(data.message)
+            notifySuccess(data.message)
         }
         else {
-            setError(data.error)
+            notifyError(data.error)
         }
 
 
@@ -155,8 +151,6 @@ const EditStudent: React.FC = () => {
                     </div>
                     <div className="form-group">
 
-                        <p className='error'>{error}</p>
-                        <p className='success'>{message}</p>
                         <button className="form-button" onClick={() => {
                             if (editing) {
                                 editStudent()

@@ -5,7 +5,8 @@ import './styles.css';
 interface Course {
     id: number,
     course_name: String,
-    enrollments: number
+    enrollments: number,
+    status: string
 }
 
 const Courses: React.FC = () => {
@@ -65,9 +66,10 @@ const Courses: React.FC = () => {
                                     checked={selected.size === courses.length}
                                 />
                             </th>
-                            <th>ID</th>
+                            {/* <th>ID</th> */}
                             <th>Course name</th>
                             <th>Enrollments</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -81,9 +83,10 @@ const Courses: React.FC = () => {
                                     />
                                 </td>
 
-                                <td>{course.id}</td>
+                                {/* <td>{course.id}</td> */}
                                 <td>{course.course_name}</td>
                                 <td>{course.enrollments}</td>
+                                <td>{course.status}</td>
                                 <td><Link to={`/courses/${course.id}`}>View</Link></td>
                             </tr>
                         ))}

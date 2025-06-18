@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import './styles.css'
 import StatusControl from './StatusControl';
+import { notifyError } from '../../notifications';
 interface Submitter {
     docs_folder: string,
     email: string,
@@ -17,11 +18,7 @@ interface Requirements {
     form: string[][]
 
 }
-interface Status {
-    at: Date,
-    by: string,
-    status: string
-}
+
 interface Comment {
     text: string,
     author: string,
@@ -33,9 +30,6 @@ interface Application {
     student_id?: number,
     applicant_id?: number,
     created_at: string,
-    exam_status: Status[],
-    interview_status: Status[],
-    status: string,
     submitted_by: string,
     submitter: Submitter,
     requirements: Requirements
@@ -44,9 +38,6 @@ interface Application {
 const SingleApplication: React.FC = () => {
     const { id } = useParams();
     const [application, setApplication] = useState<Application>()
-    const [examStatus, setExamStatus] = useState('')
-    const [interviewStatus, setInterviewStatus] = useState('')
-    const [applicationStatus, setApplicationStatus] = useState('')
     const [comment, setComment] = useState('')
     const loadApplication = async () => {
         try {
@@ -62,13 +53,11 @@ const SingleApplication: React.FC = () => {
                     data.application.comments = []
                 }
                 setApplication(data.application)
-                setExamStatus(data.application?.exam_status[data.application?.exam_status.length - 1].status)
-                setInterviewStatus(data.application?.interview_status[data.application?.interview_status.length - 1].status)
-                setApplicationStatus(data.application?.status[data.application?.status.length - 1].status)
+                // console.log(data.application?.status[data.application?.status.length - 1].status)
             }
         }
         catch {
-            alert('Error connecting to server')
+            notifyError('Error connecting to server')
         }
     }
     const addComment = async () => {
@@ -93,7 +82,6 @@ const SingleApplication: React.FC = () => {
 
     useEffect(() => {
         loadApplication()
-        console.log(application?.requirements.files)
     }, [])
 
     return (
@@ -125,9 +113,9 @@ const SingleApplication: React.FC = () => {
                 </div>
             </section>
             <section id='statusDiv'>
-                <StatusControl application_id={id} label='Application' currentStatus={applicationStatus} />
-                <StatusControl application_id={id} label='Exam' currentStatus={examStatus} />
-                <StatusControl application_id={id} label='Interview' currentStatus={interviewStatus} />
+                <StatusControl application_id={id} label='Application' />
+                <StatusControl application_id={id} label='Exam' />
+                <StatusControl application_id={id} label='Interview' />
 
             </section>
             <section>

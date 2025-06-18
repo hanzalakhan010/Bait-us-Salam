@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-
+import { notifyError } from '../../../../notifications';
+import { notifySuccess } from '../../../../notifications';
 interface Requirements {
     id: number,
     field_key: string,
@@ -57,7 +58,12 @@ const AddApplication: React.FC = () => {
                 headers: { "Course-Id": selectedCourse.id.toString() },
                 body: formData
             })
-
+            let data = await response.json()
+            if (response.status == 201) {
+                notifySuccess(data.message)
+            } else {
+                notifyError(data.error)
+            }
         }
     }
     useEffect(() => {
@@ -81,7 +87,9 @@ const AddApplication: React.FC = () => {
                         <p><i>Description: </i>{selectedCourse.course_description}</p>
                         <p><i>Course Status: </i>{selectedCourse.status}</p>
                         <div>
-                            <form onSubmit={apply}>
+                            <form onSubmit={
+                                apply
+                            }>
                                 {requirements?.length ? (
                                     <>
                                         <h3>Requirements</h3>

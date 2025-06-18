@@ -1,0 +1,52 @@
+#sessionsDiv {
+    width: 80%;
+    margin: 10px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#addSessionDiv {
+    width: 90%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 10%;
+    margin: 10px auto;
+
+}
+
+#addSessionDiv div {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+#addSessionDiv textarea{
+    resize: vertical;
+}
+#addSessionDiv button{
+    align-self: flex-end;
+    padding: 10px;
+    width: 200px;
+    background-color: rgb(202, 202, 202);
+    border: none;
+    border-radius: 10px;
+    &:hover{
+        cursor: pointer;
+    }
+}
+
+@media (max-width: 1000px) {
+    #sessionsDiv {
+        width: 95%;
+    }
+
+    #addSessionDiv {
+        grid-template-columns: 1fr;
+        column-gap: 0;
+    }
+
+    #addSessionDiv button {
+        width: 100%;
+    }
+}

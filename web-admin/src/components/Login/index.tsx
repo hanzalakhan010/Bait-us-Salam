@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import './styles.css'
 import ForgetPassword from './forgetPassword';
+import { notifyError, notifySuccess } from '../../notifications';
 interface LoginProps {
-    setLogin: React.Dispatch<React.SetStateAction<boolean>>;
+    setAuth: React.Dispatch<React.SetStateAction<"authenticated" | "loading" | "unauthenticated">>;
 }
-const Login: React.FC<LoginProps> = ({ setLogin }) => {
+const Login: React.FC<LoginProps> = ({ setAuth }) => {
     const [forgotPassword, setForgotPassword] = useState(false)
     const [email, setEmail] = useState('')
-    const [error, setError] = useState('')
     const [password, setpassword] = useState('')
     const login = async () => {
         try {
@@ -22,14 +22,15 @@ const Login: React.FC<LoginProps> = ({ setLogin }) => {
             })
             let data = await response.json()
             if (response.status == 201) {
-                setLogin(true)
+                setAuth('authenticated')
+                notifySuccess("Login Successfull")
             }
             else {
-                setError(data.error)
+                notifyError(data.error)
             }
         }
         catch {
-            alert('Error connecting to server')
+            notifyError('Error connecting to server')
         }
     }
     return (
@@ -45,7 +46,6 @@ const Login: React.FC<LoginProps> = ({ setLogin }) => {
                         onKeyDown={(e) => {
                             if (e.key == 'Enter') { login() }
                         }} />
-                    <p>{error}</p>
                     <button onClick={login}>Login</button>
                 </>
             )}
