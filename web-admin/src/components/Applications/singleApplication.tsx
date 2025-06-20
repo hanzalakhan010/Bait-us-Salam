@@ -74,8 +74,6 @@ const SingleApplication: React.FC = () => {
             let comments = application?.comments
             comments?.push(data.comment)
             setComment('')
-
-
         }
 
     }
