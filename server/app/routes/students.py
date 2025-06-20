@@ -8,8 +8,9 @@ from app.services.students import (
     getAllStudents,
     registerStudent,
     getAvailableCoursesById,
-    getApplicationByStudent,
+    getApplicationsByStudent,
     getStudentCoursesById,
+    getApplicationByID,
 )
 
 student_blueprint = Blueprint("students", __name__)
@@ -19,7 +20,7 @@ student_blueprint = Blueprint("students", __name__)
 @student_blueprint.route("/<int:student_id>/applications/", methods=["GET", "POST"])
 def StudentApplicationManagementById(student_id):
     if request.method == "GET":
-        return getApplicationByStudent(student_id=student_id)
+        return getApplicationsByStudent(student_id=student_id)
     elif request.method == "POST":
         return addApplication(
             files=request.files,
@@ -30,13 +31,22 @@ def StudentApplicationManagementById(student_id):
 
 
 @AuthRequired(min_level=3)
+@student_blueprint.route(
+    "/<int:student_id>/applications/<int:application_id>", methods=["GET"]
+)
+def StudentApplicationView(student_id, application_id):
+    if request.method == "GET":
+        return getApplicationByID(student_id=student_id, application_id=application_id)
+    
+
+@AuthRequired(min_level=3)
 @student_blueprint.route("/<int:student_id>/available_courses/", methods=["GET"])
 def StudentAvailableCourseManagementById(student_id):
     return getAvailableCoursesById(student_id=student_id)
 
 
-@AuthRequired(min_level=3)
-@student_blueprint.route("/<int:student_id>/enrolled_courses/", methods=["GET", "POST"])
+@AuthRequired(method_levels={"GET": 3})
+@student_blueprint.route("/<int:student_id>/enrolled_courses/", methods=["GET"])
 def StudentCourseManagementById(student_id):
     if request.method == "GET":
         return getStudentCoursesById(student_id=student_id)

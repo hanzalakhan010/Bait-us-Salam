@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify
-from app.services.auth import checkAuth
+from app.services.auth import checkAuth, logout
 
 auth_blueprint = Blueprint("auth", __name__)
 
-from app.services.logins import adminLogin
+from app.services.logins import adminLogin, studentLogin
 
 
 @auth_blueprint.route("/login", methods=["POST"])
@@ -12,20 +12,21 @@ def login():
     password = request.json.get("password", "")
     role = request.json.get("role", "")
 
-    if email and password and role:
+    if email and role:
         if role == "admin":
             return adminLogin(email=email, password=password)
         elif role == "student":
-            ...
+            return studentLogin(email=email, password=password)
+        else:
+            return jsonify({"error": "role not defined"})
     else:
         return jsonify({"message": "Invalid credentials"}), 401
-    # Here you would typically check the email and password against a database
 
 
 @auth_blueprint.route("/logout", methods=["POST"])
-def logout():
-    # Here you would typically handle the logout logic, such as clearing session data
-    return jsonify({"message": "Logout successful"}), 200
+def logoutFunc():
+    token = request.cookies.get("token")
+    return logout(token=token)
 
 
 @auth_blueprint.route("/auth", methods=["POST"])
