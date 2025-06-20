@@ -14,7 +14,7 @@ class Students(db.Model):
     address = db.Column(db.String(150))
     phone = db.Column(db.String(15))
     email = db.Column(db.String(50), unique=True, index=True)
-    password = db.Column(db.String(20))
+    password = db.Column(db.String(20),default = 'password123')
     __table_args__ = (db.UniqueConstraint("email"),)
     def get_sections(self):
         from app.models.courses import CourseSection, CourseEnrollment

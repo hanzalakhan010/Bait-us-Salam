@@ -82,7 +82,11 @@ class CourseSection(db.Model):
         }
 
     def to_dict_short(self):
-        return {"id": self.id, "title": self.title}
+        return {
+            "id": self.id,
+            "title": self.title,
+            "timings": self.timings,
+        }
 
 
 class Announcements(db.Model):
