@@ -1,0 +1,14 @@
+#profile h1 {
+    text-align: center;
+}
+#profile{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+/* #profile p{
+    margin-top: 3px;
+    margin-bottom: 3px;
+    border-bottom: .2px solid gray;
+} */
