@@ -2,8 +2,10 @@ from functools import wraps
 from flask import request, jsonify
 from app.models.logins import Logins
 from datetime import datetime
+from flask import make_response
+import logging
 
-import time
+logger = logging.getLogger(__name__)
 
 
 def AuthRequired(min_level=None, method_levels=None):
@@ -47,7 +49,20 @@ def AuthRequired(min_level=None, method_levels=None):
 def checkAuth(token):
     if token:
         login = Logins.query.filter_by(token=token, is_active=True).first()
-        if login.expires_at > datetime.utcnow():
+        if login and login.expires_at > datetime.utcnow():
             return jsonify({"message": "auth successfull"}), 200
         return jsonify({"error": "Session expired"}), 403
     return jsonify({"error": "Auth unsucessfull"}), 403
+
+
+def logout(token):
+    if token:
+        login = Logins.query.filter_by(token=token, is_active=True).first()
+        if login:
+            login.is_active = False
+            response = make_response(jsonify({"message": "Logout Sccuessfull"}))
+            response.set_cookie("token", "", expires=0)
+            logger.info(f"Student logout: [Login ID >> {login.id}]")
+            return response
+        return jsonify({"error": "login not found"})
+    return jsonify({"error": "Token not found"}), 403

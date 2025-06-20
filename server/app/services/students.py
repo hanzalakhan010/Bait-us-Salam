@@ -83,7 +83,7 @@ def getStudentCoursesById(student_id):
     return jsonify(
         {
             "courses": [
-                {"course": course.to_dict(), "section": section.to_dict()}
+                {"course": course.to_dict_short(), "section": section.to_dict_short()}
                 for course, section in results
             ]
         }
@@ -123,7 +123,16 @@ def getAvailableCoursesById(student_id):
     )
 
 
-def getApplicationByStudent(student_id):
+def getApplicationByID(student_id, application_id):
+    from app.models.applications import Applications
+
+    application = Applications.query.get_or_404(application_id)
+    if application and application.student_id == student_id:
+        return jsonify({"application": application.to_dict()}), 200
+    return jsonify({"error": "Application not found"}), 404
+
+
+def getApplicationsByStudent(student_id):
     from app.models.applications import Applications
 
     applications = Applications.query.filter_by(student_id=student_id)

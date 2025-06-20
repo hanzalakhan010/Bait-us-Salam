@@ -1,4 +1,5 @@
 from app.models.logins import Logins
+from app.models.students import Students
 from json import loads
 from uuid import uuid4
 import hashlib
@@ -37,7 +38,7 @@ def adminLogin(email, password):
             response.set_cookie(
                 "token",  # Cookie name
                 token,  # Token value
-                max_age=60 * 60,  # 1 hour in seconds
+                max_age=60 * 60 * 12,  # 12 hour in seconds
                 httponly=True,  # Prevent client JS access
                 secure=False,  # Only send over HTTPS (set False for local dev)
                 samesite="Lax",
@@ -50,3 +51,32 @@ def adminLogin(email, password):
             return response, 201
         logger.warn("Invalid admin login attempt")
         return jsonify({"error": "Login credentials invalid"}), 401
+
+
+def studentLogin(email, password):
+    student = Students.query.filter_by(email=email).first()
+    if not student:
+        return jsonify({"error": "Student not found"}), 401
+    if student.password != password:
+        return jsonify({"error": "Incorrect Password"}), 403
+    Logins.query.filter_by(email=email, role="student").update(
+        {Logins.is_active: False}
+    )
+    token = generateUniqueToken()
+    response = make_response(
+        jsonify({"message": "Login Succesfull", "student": student.to_dict_short()})
+    )
+    response.set_cookie(
+        "token",
+        token,
+        max_age=60 * 60 * 24,  # 24 hour in seconds
+        httponly=True,  # Prevent client JS access
+        secure=False,  # Only send over HTTPS (set False for local dev)
+        samesite="Lax",
+    )
+    login = Logins(role="student", email=email, token=token, role_level=3)
+    db.session.add(login)
+    db.session.commit()
+    session["user"] = {"role": login.role, "role_level": login.role_level}
+    logger.info(f"Student login: [Student ID >> {student.id}]")
+    return response, 201
