@@ -20,7 +20,7 @@ def create_app(config_class="app.config.Config"):
     cors.init_app(
         app,
         supports_credentials=True,
-        origins=["http://localhost:5173"],
+        origins=["http://localhost:5173","http://192.168.10.8:5173"],
     )
 
     register_routes(app)
