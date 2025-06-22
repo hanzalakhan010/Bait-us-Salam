@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { notifyError, notifySuccess } from '../../notifications';
-import { data } from 'react-router-dom';
 interface StatusControlProp {
     application_id: string | undefined;
     label: keyof typeof validTransitions;

@@ -65,13 +65,22 @@ const Applicaions: React.FC = () => {
             <div id='filterDiv'>
                 <div>
                     <h6>Filter by Course</h6>
-                    {courses.map((course) => (
-                        <label>
+                    {courses.map((course, index) => (
+                        <label key={index}>
                             <input type='radio' name='courseFilter' value={course.id}
-                                onChange={(e) => setFilters({ ...filters, course_id: e.target.value })} />
+                                checked={filters.course_id == course.id.toString()}
+                                onChange={(e) => {
+                                    setFilters({ ...filters, course_id: e.target.value })
+                                }} />
                             {course.course_name}
                         </label>
                     ))}
+                    <div>
+                        <button onClick={() => {
+                            delete filters['course_id']
+                            setFilters(filters)
+                        }}>Clear Filter</button>
+                    </div>
                 </div>
                 <div>
                     <h6>Filter by Status</h6>
@@ -79,6 +88,9 @@ const Applicaions: React.FC = () => {
                 </div>
 
             </div>
+            {applications.length == 0 && (
+                <h3>No applications</h3>
+            )}
             <table className="table">
                 <thead>
                     <tr>
@@ -91,9 +103,6 @@ const Applicaions: React.FC = () => {
                         <th>Actions</th>
                     </tr>
                 </thead>
-                {applications.length == 0 && (
-                    <h3>No applications</h3>
-                )}
                 <tbody id="body">
 
                     {applications.map((application) => (
@@ -112,7 +121,7 @@ const Applicaions: React.FC = () => {
                 </tbody>
             </table>
 
-        </div>)
+        </div >)
 }
 
 export default Applicaions;

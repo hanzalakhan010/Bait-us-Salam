@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import './styles.css'
 import StatusControl from './StatusControl';
-import { notifyError } from '../../notifications';
+import { notifyError, notifySuccess } from '../../notifications';
 interface Submitter {
     docs_folder: string,
     email: string,
@@ -74,6 +74,7 @@ const SingleApplication: React.FC = () => {
             let comments = application?.comments
             comments?.push(data.comment)
             setComment('')
+            notifySuccess("Added Comment")
         }
 
     }
