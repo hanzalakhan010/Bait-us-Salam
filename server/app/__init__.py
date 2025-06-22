@@ -20,20 +20,27 @@ def create_app(config_class="app.config.Config"):
     cors.init_app(
         app,
         supports_credentials=True,
-        origins=["http://localhost:5173","http://192.168.10.8:5173"],
+        origins=["http://localhost:5173", "http://192.168.10.8:5173"],
     )
 
     register_routes(app)
 
     @app.route("/uploads/<folder_id>/<filename>")
-    @AuthRequired(min_level=1)
+    @AuthRequired(min_level=3)
     def serveUploadFolder(folder_id, filename):
         directory = os.path.abspath(os.path.join(UPLOAD_FOLDER, folder_id))
         full_path = os.path.join(directory, filename)
         if not os.path.isfile(full_path):
-            print("debug")
             abort(404)
-        print(directory, filename)
+        return send_from_directory(directory, filename)
+
+    @app.route("/uploads/courses/<filename>")
+    @AuthRequired(min_level=3)
+    def serveCourseFolder(filename):
+        directory = os.path.abspath(os.path.join(UPLOAD_FOLDER, "courses"))
+        full_path = os.path.join(directory, filename)
+        if not os.path.isfile(full_path):
+            abort(404)
         return send_from_directory(directory, filename)
 
     return app
