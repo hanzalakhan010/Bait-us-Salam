@@ -1,0 +1,10 @@
+#ApplicationView{
+
+}
+#files{
+    display: flex;
+    flex-wrap: wrap;
+}
+#files img{
+    width: 150px;
+}

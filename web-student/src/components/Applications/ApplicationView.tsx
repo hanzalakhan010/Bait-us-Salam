@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { host } from '../../constants';
+import './styles.css'
 interface Student {
     id: number,
     email: string,
@@ -54,50 +55,55 @@ const ApplicationView: React.FC = () => {
     useEffect(() => {
         loadApplication()
     }, [])
-    return (<div id='ApplicationView'>
-        <h1>Application for:  `{application?.course_name}` </h1>
-        <section>
-            <p><i>Date: </i>{application?.created_at ? new Date(application.created_at).toLocaleDateString() : 'N/A'}</p>
-            <p><i>Course:</i> {application?.course_name}</p>
-        </section>
-        <section>
-            <h3>Requirement Form</h3>
-            {application?.requirements.form.map((req, index) => <div key={index}>
-                <p><span style={{ display: 'inline-block' }}>{req[0]}:</span> {req[1]}</p>
-            </div>)}
-        </section>
-        <section id='filesDiv'>
-            {application?.requirements?.files.length != 0 && (
-                <>
-                    <h3>Files</h3>
-                    <div id='files'>
-                        {application?.requirements?.files.map((file, index) =>
-                            <div key={index}>
-                                <p>{file[0]}</p>
-                                <img key={index} src={`http://localhost:5000/uploads/${application?.submitter.docs_folder}/${file[1]}`} />
+    return (
+        <div id='ApplicationView'>
+            <h1>Application for:  `{application?.course_name}` </h1>
+            <section>
+                <p><i>Date: </i>{application?.created_at ? new Date(application.created_at).toLocaleDateString() : 'N/A'}</p>
+                <p><i>Course:</i> {application?.course_name}</p>
+            </section>
+            {application?.requirements.form.length!=0 ? (
+                <section>
+                    <h3>Requirement Form</h3>
+                    {application?.requirements.form.map((req, index) => <div key={index}>
+                        <p><span style={{ display: 'inline-block' }}>{req[0]}:</span> {req[1]}</p>
+                    </div>)}
+                </section>
+            ):null}
+            {application?.requirements.files && (
+
+                <section id='filesDiv'>
+                    {application?.requirements?.files.length != 0 && (
+                        <>
+                            <h3>Files</h3>
+                            <div id='files'>
+                                {application?.requirements?.files.map((file, index) =>
+                                    <div key={index}>
+                                        <p>{file[0]}</p>
+                                        <img key={index} src={`${host}/uploads/${application?.submitter.docs_folder}/${file[1]}`} />
+                                    </div>
+
+                                )}
                             </div>
-
-                        )}
-                    </div>
-                </>
+                        </>
+                    )}
+                </section>
             )}
-        </section>
-        <section>
-            {application?.comments.length == 0 ? <h3>No comments</h3> : (
-                <>
-                    <h4>Comments</h4>
-                    {application?.comments.map((comment, index) =>
-                        <div key={index} className='comments'>
-                            <span className='author'>By:<b>{comment.author}</b></span>
-
-                            <span className='timestamp'>At: <b>{new Date(comment.timestamp).toDateString()}</b></span>
-                            <br />
-                            <span className='text'><i>{comment.text}</i></span>
-                        </div>)}
-                </>
-            )}
-        </section>
-    </div >
+            <section>
+                {application?.comments.length == 0 ? <h3>No comments</h3> : (
+                    <>
+                        <h4>Comments</h4>
+                        {application?.comments.map((comment, index) =>
+                            <div key={index} className='comments'>
+                                <span className='author'>By:<b>{comment.author}</b></span>
+                                <span className='timestamp'>At: <b>{new Date(comment.timestamp).toDateString()}</b></span>
+                                <br />
+                                <span className='text'><i>{comment.text}</i></span>
+                            </div>)}
+                    </>
+                )}
+            </section>
+        </div >
     );
 };
 

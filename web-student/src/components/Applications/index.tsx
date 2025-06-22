@@ -25,8 +25,12 @@ const Applications: React.FC = () => {
     const student: Student = localStorage.getItem('student') ? JSON.parse(localStorage.getItem('student') as string) : null;
 
     const loadApplications = async () => {
+        if (!student) {
+            notifyError('Student data not found in  localstorage,Logout first')
+            return
+        }
         try {
-            let response = await fetch(`${host}/api/v1/students/${student.id}/applications`)
+            let response = await fetch(`${host}/api/v1/students/${student.id}/applications`, { credentials: 'include' })
             let data = await response.json()
             if (response.ok) {
                 setApplications(data.applications)
@@ -62,7 +66,7 @@ const Applications: React.FC = () => {
                                     <td><i>{application.exam_status.status}</i></td>
                                     <td><i>{application.interview_status.status}</i></td>
                                     <td><i>{application.status.status}</i></td>
-                                    <Link to={`/applications/${application.id}`}>View</Link>
+                                    <td><Link to={`/applications/${application.id}`}>View</Link></td>
                                 </tr>
                             ))}
                         </tbody>
