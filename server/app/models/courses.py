@@ -10,6 +10,8 @@ class Courses(db.Model):
     course_name = db.Column(db.String(20))
     course_description = db.Column(db.Text)
     status = db.Column(db.String(20), default="inactive")
+    logoImg = db.Column(db.String(100))
+    bannerImg = db.Column(db.String(100))
     requirements = db.Column(db.JSON)
     # course_sections = db.relationship("CourseSection", backref="course", lazy="joined")
 
@@ -17,6 +19,8 @@ class Courses(db.Model):
         base = {
             "id": self.id,
             "course_name": self.course_name,
+            "logoImg": self.logoImg,
+            "bannerImg": self.bannerImg,
         }
         if role == "admin":
             base.update(
