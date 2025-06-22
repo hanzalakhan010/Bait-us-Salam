@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { host } from '../../constants';
+import { notifyError } from '../../notification';
 
 interface Profile {
     name: string,
@@ -21,6 +22,10 @@ const Profile: React.FC = () => {
     const student: Student = localStorage.getItem('student') ? JSON.parse(localStorage.getItem('student') as string) : null;
 
     const loadProfile = async () => {
+        if (!student) {
+            notifyError('Student data not found in  localstorage,Logout first')
+            return
+        }
         let resposnse = await fetch(`${host}/api/v1/students/${student.id}/details`, {
             credentials: 'include'
         })

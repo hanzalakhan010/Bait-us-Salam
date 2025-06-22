@@ -34,6 +34,10 @@ const Courses: React.FC = () => {
 
 
     const loadCourses = async () => {
+        if (!student) {
+            notifyError('Student data not found in  localstorage,Logout first')
+            return
+        }
         try {
             let response = await fetch(`${host}/api/v1/students/${student.id}/enrolled_courses`,
                 { credentials: 'include' })
