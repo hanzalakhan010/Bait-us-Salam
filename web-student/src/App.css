@@ -50,6 +50,9 @@ nav a,
     font-weight: bolder;
     margin: 10px;
     text-decoration: none;
+    &:hover{
+        cursor: pointer;
+    }
 }
 
 #navDiv button {
