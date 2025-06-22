@@ -54,7 +54,9 @@ const EditStudent: React.FC = () => {
     }
     const loadStudentDetails = async () => {
         try {
-            let response = await fetch(`http://localhost:5000/api/v1/students/${id}/details/`);
+            let response = await fetch(`http://localhost:5000/api/v1/students/${id}/details/`,{
+                credentials:'include'
+            });
             if (response.status === 200) {
                 let data = await response.json();
                 const formattedDob = data.dob ? new Date(data.dob).toISOString().split('T')[0] : '';

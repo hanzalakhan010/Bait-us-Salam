@@ -5,11 +5,7 @@ const Courses: React.FC = () => {
     const { id } = useParams()
     const loadCourses = async () => {
         let response = await fetch(`http://localhost:5000/api/v1/students/${id}/enrolled_courses/`, {
-            headers: {
-
-                "Token": localStorage.getItem('token') || '',
-                "Email": localStorage.getItem('email') || ''
-            }
+            credentials: "include"
         })
         let data = await response.json()
         console.log(data)
