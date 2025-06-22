@@ -1,0 +1,32 @@
+.course {
+    /* position: relative; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: .1px solid gray;
+    padding: 3px;
+    margin: 3px 0px;
+    border-radius: 3px;
+    flex-wrap: wrap;
+}
+
+.course a {
+    text-decoration: none;
+    font-size: larger;
+    background-color: greenyellow;
+    padding: 10px;
+}
+
+.course .logo {
+    /* position: absolute; */
+    top: 7dvh;
+    right: 15dvw;
+    width: 50px;
+    height: 50px;
+    align-self: flex-start;
+
+}
+
+.course .banner {
+    width: 100%;
+}
