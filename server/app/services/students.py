@@ -115,7 +115,8 @@ def getAvailableCoursesById(student_id):
 
     # Filter courses that are not in the excluded list and have inactive status
     available_courses = Courses.query.filter(
-        Courses.id.notin_(excluded_course_ids), Courses.status == "open_to_application"
+        Courses.id.notin_(excluded_course_ids),
+        Courses.status == "open_to_application",
     ).all()
 
     return jsonify(

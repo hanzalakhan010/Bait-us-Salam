@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import request, jsonify
+from flask import request, jsonify, session
 from app.models.logins import Logins
 from datetime import datetime
 from flask import make_response
@@ -55,7 +55,23 @@ def checkAuth(token):
     return jsonify({"error": "Auth unsucessfull"}), 403
 
 
+def studentAuth(student_id):
+    # print(session)
+    if (session.get("user", {})).get("role") == "admin":
+        return True
+    if session.get("user", {}).get("student_id", "") == student_id:
+        return True
+    if (session.get("user", {})).get("role") == "student":
+        logger.warn(
+            f"Suspicious activity by student with studentID:{session.get('user', {}).get('student_id', '')}"
+        )
+        return False
+    logger.warn(f"Suspicious activity with session:{session}")
+    return False
+
+
 def logout(token):
+    session.clear()
     if token:
         login = Logins.query.filter_by(token=token, is_active=True).first()
         if login:

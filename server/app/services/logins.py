@@ -77,6 +77,10 @@ def studentLogin(email, password):
     login = Logins(role="student", email=email, token=token, role_level=3)
     db.session.add(login)
     db.session.commit()
-    session["user"] = {"role": login.role, "role_level": login.role_level}
+    session["user"] = {
+        "role": login.role,
+        "role_level": login.role_level,
+        "student_id": student.id,
+    }
     logger.info(f"Student login: [Student ID >> {student.id}]")
     return response, 201
