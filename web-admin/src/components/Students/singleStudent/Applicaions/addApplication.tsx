@@ -43,18 +43,18 @@ const AddApplication: React.FC = () => {
     }
 
     const loadAvailableCourse = async () => {
-        let response = await fetch(`http://localhost:5000/api/v1/students/${id}/available_courses`)
+        let response = await fetch(`http://localhost:5000/api/v1/students/${id}/available_courses`, { credentials: 'include' })
         let data = await response.json()
         setAvailable_courses(data.courses)
     }
     const apply = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        console.log(selectedCourse)
         if (selectedCourse?.id) {
             let formData = new FormData(event.currentTarget)
             // console.log(formData)
             let response = await fetch(`http://localhost:5000/api/v1/students/${id}/applications/`, {
                 method: "POST",
+                credentials: 'include',
                 headers: { "Course-Id": selectedCourse.id.toString() },
                 body: formData
             })
