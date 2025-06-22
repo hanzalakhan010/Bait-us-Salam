@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import { X, Pencil, SaveAllIcon } from "lucide-react"
 import { useParams } from "react-router-dom"
 import './styles.css'
+import { notifyError, notifySuccess } from "../../../notifications"
 
 interface Course {
     course_name: string,
@@ -21,7 +22,6 @@ interface Requirements {
 const EditDetails: React.FC = () => {
     const { id } = useParams()
     const [edit, setEdit] = useState(false)
-    const [updateStatus, setUpdateStatus] = useState('')
     const [course, setCourse] = useState<Course>({
         course_name: '',
         course_description: '',
@@ -59,17 +59,22 @@ const EditDetails: React.FC = () => {
         }
     }
     const saveDetails = async () => {
-        let response = await fetch(`http://localhost:5000/api/v1/courses/${id}/details`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'Application/json'
-            },
-            credentials: 'include',
-            body: JSON.stringify({ ...course, requirements })
-        })
-        let data = await response.json()
-        if (response.status == 201) {
-            setUpdateStatus(data.message)
+        try {
+
+            let response = await fetch(`http://localhost:5000/api/v1/courses/${id}/details`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'Application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({ ...course, requirements })
+            })
+            let data = await response.json()
+            if (response.status == 201) {
+                notifySuccess(data.message)
+            }
+        } catch {
+            notifyError('Error connecting to server')
         }
 
     }
@@ -89,7 +94,6 @@ const EditDetails: React.FC = () => {
                         {edit ? <SaveAllIcon /> : <Pencil />
                         }
                     </button>
-                    <p>{updateStatus}</p>
                 </div>
                 <h3>Course Name</h3>
                 <input disabled={!edit} value={course.course_name}
